@@ -9,13 +9,11 @@ import ru.bosony.model.cellscontents.CellContent;
  */
 public class Cell {
 
-	protected int			x;
-	protected int			y;
+	protected Coordinate	coordinate;
 	protected CellContent	content;
 
-	public Cell(int x, int y, CellContent content) {
-		this.x = x;
-		this.y = y;
+	public Cell(Coordinate coordinate, CellContent content) {
+		this.coordinate = coordinate;
 		this.content = content;
 	}
 
@@ -27,12 +25,8 @@ public class Cell {
 		this.content = content;
 	}
 
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
+	public Coordinate getCoordinate() {
+		return coordinate;
 	}
 
 }

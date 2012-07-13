@@ -8,6 +8,11 @@ import ru.bosony.model.cellscontents.CellContent;
 import ru.bosony.model.mine.Cell;
 import ru.bosony.model.mine.Mine;
 
+/**
+ * @author 	indvdum (gotoindvdum[at]gmail[dot]com) <br>
+ * 			14.07.2012 0:37:14
+ *
+ */
 public class TestMineParsing {
 	
 	protected static String alignMap(String map) {
