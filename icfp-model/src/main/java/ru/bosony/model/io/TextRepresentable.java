@@ -8,6 +8,5 @@ package ru.bosony.model.io;
 public interface TextRepresentable {
 
 	public String toText();
-	public TextRepresentable fromText(String text);
 	
 }

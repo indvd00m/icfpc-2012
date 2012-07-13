@@ -7,20 +7,30 @@ import ru.bosony.model.io.TextRepresentable;
  *         13.07.2012 21:25:49
  * 
  */
-public abstract class CellContent implements TextRepresentable {
+public enum CellContent implements TextRepresentable {
+	
+	ClosedLambdaLift("L"),
+	Earth("."),
+	Empty(" "),
+	Lambda("\\"),
+	MiningRobot("R"),
+	OpenLambdaLift("O"),
+	Rock("*"),
+	Wall("#");
+
+	private String	text;
+
+	private CellContent(String text) {
+		this.text = text;
+	}
 
 	@Override
-	public CellContent fromText(String text) {
-		for (CellContent content : new CellContent[] {
-				new ClosedLambdaLift(),
-				new Earth(),
-				new Empty(),
-				new Lambda(),
-				new MiningRobot(),
-				new OpenLambdaLift(),
-				new Rock(),
-				new Wall()
-		}) {
+	public String toText() {
+		return text;
+	}
+
+	public static CellContent fromText(String text) {
+		for (CellContent content : values()) {
 			if (text != null && text.equals(content.toText()))
 				return content;
 		}
