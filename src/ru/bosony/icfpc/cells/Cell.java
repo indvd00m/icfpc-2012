@@ -1,30 +1,22 @@
 package ru.bosony.icfpc.cells;
 
-public class Cell
+public enum  Cell
 {
+	ROBOT('R'),
+	ROCK('*'),
+	EAGHT('.'),
+	WALL('#'),
+	LAMBDA('\\'),
+	CLOSED_LAMBDA_LIFT('L'),
+	OPEN_LAMBDA_LIFT('O'),
+	EMPTY(' '),
+	EARTH('.');
 	
-	private CellTypes type;
 	private char ASCII;
 	
-	public Cell(CellTypes type, char ASCII)
+	private Cell(char ASCII)
 	{
-		this.type = type;
 		this.ASCII = ASCII;
-	}
-	
-	public Cell(Cell cell)
-	{
-		this.type = cell.type;
-		this.ASCII = cell.ASCII;
-	}
-	
-	public CellTypes getType()
-	{
-		return type;
-	}
-	public void setType(CellTypes type)
-	{
-		this.type = type;
 	}
 	
 	public char getASCII()

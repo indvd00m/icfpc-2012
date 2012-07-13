@@ -1,10 +1,10 @@
 package ru.bosony.icfpc;
 
+import java.nio.file.FileVisitOption;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import ru.bosony.icfpc.cells.Cell;
-import ru.bosony.icfpc.cells.CellTypes;
 
 /**
  * Шахта
@@ -16,44 +16,82 @@ public class Mine
 {
 	private Map<Character, Cell> cellPrototypes = new LinkedHashMap<Character, Cell>();
 	
-	private Cell cells[][];
+	private Cell cells[][][];
+	private int index = 0;
 	
 	public Mine(int n, int m, String content)
 	{
 		initCellPrototypes();
 		
-		cells = new Cell[n][m];
+		cells = new Cell[2][n][m];
 		
 		int index = 0;
 		
 		for(int i=0; i<n; ++i)
 		for(int j=0; j<m; ++j)
 		{
-			cells[i][j] = new Cell( cellPrototypes.get(content.charAt(index++)) );
+			cells[index][i][j] = cellPrototypes.get(content.charAt(index++));
 		}
+	}
+	
+	private Cell[][] firstBuffer()
+	{
+		return cells[index];
+	}
+	
+	private Cell[][] secondBuffer()
+	{
+		return cells[index==0 ? 1 : 0];
+	}
+	
+	private void swapBuffers()
+	{
+		index = index==0 ? 1 : 0;
 	}
 	
 	private void initCellPrototypes()
 	{
-		cellPrototypes.put('*', new Cell(CellTypes.ROCK, '*'));
-		cellPrototypes.put('\\', new Cell(CellTypes.LAMBDA, '\\'));
-		cellPrototypes.put('#', new Cell(CellTypes.WALL, '#'));
-		cellPrototypes.put('R', new Cell(CellTypes.ROBOT, 'R'));
-		cellPrototypes.put('L', new Cell(CellTypes.CLOSED_LAMBDA_LIFT, 'L'));
-		cellPrototypes.put('O', new Cell(CellTypes.OPEN_LAMBDA_LIFT, 'O'));
-		cellPrototypes.put(' ', new Cell(CellTypes.SPACE, ' '));
-		cellPrototypes.put('.', new Cell(CellTypes.EARTH, '.'));
+		for(Cell c : Cell.values())
+		{
+			cellPrototypes.put(c.getASCII(), c);
+		}
 	}	
 
-	void print()
+	public void print()
 	{
 		for(int i=0; i<cells.length; ++i)
 		{
 			for(int j=0; j<cells[i].length; ++j)
 			{
-				System.out.print(cells[i][j].getASCII());
+				System.out.print(firstBuffer()[i][j]);
 			}
 			System.out.println();
 		}
 	}
+	
+	public void updateAfterMove()
+	{
+		for(int i=0; i<cells.length; ++i)
+		for(int j=0; j<cells[i].length; ++j)
+		{
+			secondBuffer()[i][j] = firstBuffer()[i][j];
+		}
+		
+		for(int i=1; i<cells.length-1; ++i)
+		for(int j=cells[i].length-1; j>1; --j)
+		{
+			switch(firstBuffer()[i][j])
+			{
+				case ROCK:
+				{
+					if(firstBuffer()[i][j-1] == Cell.EMPTY)
+					{
+						secondBuffer()[i][j] = Cell.EMPTY;
+					}
+				}
+				break;
+			}
+		}
+	}
+	
 }
