@@ -185,10 +185,10 @@ public class Game {
 		return state;
 	}
 
-	public GameState move(String sMovs) {
+	public GameState move(String route) {
 		List<Movement> movs = new ArrayList<Movement>();
-		for (int i = 0; i < sMovs.length(); i++) {
-			String s = "" + sMovs.charAt(i);
+		for (int i = 0; i < route.length(); i++) {
+			String s = "" + route.charAt(i);
 			for (Movement mov : Movement.values()) {
 				if (mov.toText().equals(s)) {
 					movs.add(mov);
