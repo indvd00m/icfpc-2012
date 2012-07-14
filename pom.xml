@@ -54,6 +54,11 @@
 				<artifactId>icfp-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>ru.bosony.icfp-2012</groupId>
+				<artifactId>icfp-interpreter</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -71,5 +76,6 @@
 	</dependencies>
 	<modules>
 		<module>icfp-model</module>
+		<module>icfp-interpreter</module>
 	</modules>
 </project>
