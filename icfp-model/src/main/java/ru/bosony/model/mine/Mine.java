@@ -134,7 +134,7 @@ public class Mine implements TextRepresentable {
 	public Set<Cell> findCells(CellContent content) {
 		Set<Cell> finded = new HashSet<Cell>();
 		for (int y = sizeY - 1; y >= 0; y--) {
-			for (int x = 0; x < sizeX - 1; x++) {
+			for (int x = 0; x < sizeX; x++) {
 				if (cells[x][y].getContent() == content)
 					finded.add(cells[x][y]);
 			}
