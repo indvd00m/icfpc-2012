@@ -3,6 +3,7 @@ syntax: glob
 
 syntax: regexp
 .*target\/.*
+.*bin\/.*
 .*\.settings\/.*
 \.classpath
 \.project
