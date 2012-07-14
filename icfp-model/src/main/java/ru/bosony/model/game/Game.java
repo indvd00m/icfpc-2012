@@ -25,12 +25,13 @@ import ru.bosony.model.moving.Movement;
  */
 public class Game {
 
-	Mine				mine					= null;
-	private Cell[][]	prevStepCells;
-	protected int		score					= 0;
-	protected int		lastScoreChange			= 0;
-	protected GameState	state					= GameState.Game;
-	protected int		lambdaCollectedCount	= 0;
+	Mine						mine					= null;
+	private Cell[][]			prevStepCells;
+	protected int				score					= 0;
+	protected int				lastScoreChange			= 0;
+	protected GameState			state					= GameState.Game;
+	protected int				lambdaCollectedCount	= 0;
+	protected List<Movement>	route					= new ArrayList<Movement>();
 
 	public Game(Mine mine) {
 		this.mine = mine;
@@ -67,6 +68,7 @@ public class Game {
 		score--;
 
 		// Moving and scoring
+		route.add(mov);
 		Coordinate nextRobotCoord = null;
 		switch (mov) {
 		case ABORT:
@@ -219,5 +221,17 @@ public class Game {
 
 	public int getLambdaCollectedCount() {
 		return lambdaCollectedCount;
+	}
+
+	public List<Movement> getRoute() {
+		return route;
+	}
+
+	public String getStringRoute() {
+		String movs = "";
+		for (Movement mov : route) {
+			movs += mov.toText();
+		}
+		return movs;
 	}
 }
