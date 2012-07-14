@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import ru.bosony.model.game.Game;
 import ru.bosony.model.game.GameState;
+import ru.bosony.model.maps.ExampleMaps;
 import ru.bosony.model.mine.Mine;
 
 /**
@@ -17,41 +18,7 @@ public class TestGame {
 
 	@Test
 	public void testMapFromTask() {
-		/* Map from task (15x15)
-		 * 
-			###############
-			#***...R......#
-			#***... ...*..#
-			#\\\... ..\\\.#
-			#...... ...*..#
-			#..     .. ...#
-			#.... .... ...#
-			#.... .... ...#
-			#.. .       ..#
-			#..*. .. .....#
-			#.... .. .....#
-			#.\.. .......*#
-			#.............#
-			#.........   .#
-			#############L#
-
-		 */
-		String map = 
-				"###############\n" + 
-				"#***...R......#\n" + 
-				"#***... ...*..#\n" + 
-				"#\\\\\\... ..\\\\\\.#\n" + 
-				"#...... ...*..#\n" + 
-				"#..     .. ...#\n" + 
-				"#.... .... ...#\n" + 
-				"#.... .... ...#\n" + 
-				"#.. .       ..#\n" + 
-				"#..*. .. .....#\n" + 
-				"#.... .. .....#\n" + 
-				"#.\\.. .......*#\n" + 
-				"#.............#\n" + 
-				"#.........   .#\n" + 
-				"#############L#";
+		String map = ExampleMaps.MAP_FROM_TASK.getMap();
 		Mine mine = new Mine(map);
 		Game game = new Game(mine);
 		String route = "DDDLLLLLLURRRRRRRRRRRRDDDDDDDLLLLLLLLLLLDDDRRRRRRRRRRRD"; 

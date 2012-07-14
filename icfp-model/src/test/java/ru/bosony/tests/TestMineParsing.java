@@ -1,20 +1,19 @@
 package ru.bosony.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import ru.bosony.model.cellscontents.CellContent;
-import ru.bosony.model.mine.Cell;
+import ru.bosony.model.maps.ExampleMaps;
 import ru.bosony.model.mine.Mine;
 
 /**
- * @author 	indvdum (gotoindvdum[at]gmail[dot]com) <br>
- * 			14.07.2012 0:37:14
- *
+ * @author indvdum (gotoindvdum[at]gmail[dot]com) <br>
+ *         14.07.2012 0:37:14
+ * 
  */
 public class TestMineParsing {
-	
+
 	protected static String alignMap(String map) {
 		String alignedMap = "";
 		String[] rows = map.split("\n");
@@ -39,205 +38,79 @@ public class TestMineParsing {
 
 	@Test
 	public void testMap01() {
-		String map = 
-				"######\n" + 
-				"#. *R#\n" + 
-				"#  \\.#\n" + 
-				"#\\ * #\n" + 
-				"L  .\\#\n" + 
-				"######";
+		String map = ExampleMaps.MAP_01.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap02() {
-		String map = 
-				"#######\n" + 
-				"#..***#\n" + 
-				"#..\\\\\\#\n" + 
-				"#...**#\n" + 
-				"#.*.*\\#\n" + 
-				"LR....#\n" + 
-				"#######";
+		String map = ExampleMaps.MAP_02.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap03() {
-		String map = 
-				"########\n" + 
-				"#..R...#\n" + 
-				"#..*...#\n" + 
-				"#..#...#\n" + 
-				"#.\\.\\..L\n" + 
-				"####**.#\n" + 
-				"#\\.....#\n" + 
-				"#\\..* .#\n" + 
-				"########";
+		String map = ExampleMaps.MAP_03.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap04() {
-		String map = 
-				"#########\n" + 
-				"#.*..#\\.#\n" + 
-				"#.\\..#\\.L\n" + 
-				"#.R .##.#\n" + 
-				"#.\\  ...#\n" + 
-				"#..\\  ..#\n" + 
-				"#...\\  ##\n" + 
-				"#....\\ \\#\n" + 
-				"#########";
+		String map = ExampleMaps.MAP_04.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap05() {
-		String map = 
-				"############\n" + 
-				"#..........#\n" + 
-				"#.....*....#\n" + 
-				"#..\\\\\\\\\\\\..#\n" + 
-				"#.     ....#\n" + 
-				"#..\\\\\\\\\\\\\\.#\n" + 
-				"#..\\..    .#\n" + 
-				"#..\\.. ....#\n" + 
-				"#..... ..* #\n" + 
-				"#..### ### #\n" + 
-				"#...R#\\#\\\\.#\n" + 
-				"######L#####";
+		String map = ExampleMaps.MAP_05.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap06() {
-		String map = 
-				"###############\n" + 
-				"#\\\\\\.......** #\n" + 
-				"#\\\\#.#####...##\n" + 
-				"#\\\\#.....*##. #\n" + 
-				"#\\#####\\...## #\n" + 
-				"#\\......####* #\n" + 
-				"#\\.######* #.\\#\n" + 
-				"#\\.#. *...##.##\n" + 
-				"#\\##. ..  *...#\n" + 
-				"#\\...... L#.#.#\n" + 
-				"###########.#.#\n" + 
-				"#\\..........#.#\n" + 
-				"##.##########.#\n" + 
-				"#R.#\\.........#\n" + 
-				"###############";
+		String map = ExampleMaps.MAP_06.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap07() {
-		String map = 
-				"    #######\n" + 
-				"    ##    *#\n" + 
-				"     ##R  *##\n" + 
-				"      ##\\\\\\\\##\n" + 
-				"       ##....##\n" + 
-				"      ##..\\ . ##\n" + 
-				"     ## . L .  ##\n" + 
-				"    ##\\\\\\# #\\\\\\\\##\n" + 
-				"   ######   #######";
+		String map = ExampleMaps.MAP_07.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap08() {
-		String map = 
-				"##############\n" + 
-				"#\\\\... ......#\n" + 
-				"###.#. ...*..#\n" + 
-				"  #.#. ... ..#\n" + 
-				"### #.   \\ ..#\n" + 
-				"#. .#..... **#######\n" + 
-				"#.#\\#..... ..\\\\\\*. #\n" + 
-				"#*\\\\#.###. ####\\\\\\ #\n" + 
-				"#\\\\.#.     ...## \\ #\n" + 
-				"#\\#.#..... ....# \\ #  \n" + 
-				"###.#..... ....#   ##\n" + 
-				"#\\\\.#..... ....#\\   # \n" + 
-				"########.. ..###*####\n" + 
-				"#......... .........#\n" + 
-				"#......... ....***..#\n" + 
-				"#..\\\\\\\\\\ # ####.....#\n" + 
-				"#........*R..\\\\\\   .#\n" + 
-				"##########L##########";
+		String map = ExampleMaps.MAP_08.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap09() {
-		String map = 
-				"        #L#######\n" + 
-				"        #*** \\\\ #\n" + 
-				"        #\\\\\\ .. #\n" + 
-				"#########.##    ##########\n" + 
-				"#.......\\ ..........*   .#\n" + 
-				"#*******\\......#....#\\\\ .#\n" + 
-				"###\\.\\\\\\...**..#....... *#\n" + 
-				"#*****\\\\  .\\\\..##     #\\.#\n" + 
-				"######### ....  ##########\n" + 
-				"        #       #\n" + 
-				"        ####*####      \n" + 
-				"        #.......#\n" + 
-				"#########  \\\\\\\\*##########\n" + 
-				"#*\\\\  **#     *..*\\ \\\\\\\\\\#\n" + 
-				"#.\\**\\*** .....**.# \\\\##\\#\n" + 
-				"#\\R......     .\\\\.. \\\\\\\\\\#\n" + 
-				"##########################";
+		String map = ExampleMaps.MAP_09.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
 	}
-	
+
 	@Test
 	public void testMap10() {
-		String map = 
-				"#############################\n" + 
-				"#..........................\\#\n" + 
-				"#..\\\\###...#....        ###.#\n" + 
-				"#..\\*\\\\\\.. #.... ..##\\\\..\\#.#\n" + 
-				"#..\\*\\.... #.... ..#\\#....#.#\n" + 
-				"#...\\###.. #.... ....#....#.#\n" + 
-				"#... ..... ..... .####......#\n" + 
-				"#\\\\. #....           .......#\n" + 
-				"#... #..#. .....*\\ ##.......#\n" + 
-				"#.#....... ...#..  ....######\n" + 
-				"#. ...#... ...#.\\  ....#..* #\n" + 
-				"##........ ...#.. #....#.#\\\\#\n" + 
-				"#.....*... .....*\\#\\\\.....*.#\n" + 
-				"#.***.* .......*\\****.....#.#\n" + 
-				"#.\\\\\\.. ................   .#\n" + 
-				"#.#####    .######    ##### #\n" + 
-				"#....\\\\.................... #\n" + 
-				"#....****...#.##.....\\\\\\\\..\\#\n" + 
-				"#....\\\\\\\\...#.........*....\\#\n" + 
-				"#....\\\\\\\\...#.\\\\.    #\\###.\\#\n" + 
-				"#....     ..#.... ...#\\\\\\\\. #\n" + 
-				"#........ ..#.... ...#..... #\n" + 
-				"#........         ........#R#\n" + 
-				"###########################L#";
+		String map = ExampleMaps.MAP_10.getMap();
 		Mine mine = new Mine(map);
 		String parsed = mine.toText();
 		assertEquals(alignMap(map), parsed);
