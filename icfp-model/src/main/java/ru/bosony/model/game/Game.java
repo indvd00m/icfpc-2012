@@ -8,7 +8,9 @@ import static ru.bosony.model.cellscontents.CellContent.MiningRobot;
 import static ru.bosony.model.cellscontents.CellContent.OpenLambdaLift;
 import static ru.bosony.model.cellscontents.CellContent.Rock;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import ru.bosony.model.cellscontents.CellContent;
 import ru.bosony.model.mine.Cell;
@@ -173,6 +175,28 @@ public class Game {
 		lastScoreChange = score - prevScore;
 		state = GameState.Game;
 		return state;
+	}
+
+	public GameState move(List<Movement> movs) {
+		for (Movement mov : movs) {
+			if (move(mov) != GameState.Game)
+				return state;
+		}
+		return state;
+	}
+
+	public GameState move(String sMovs) {
+		List<Movement> movs = new ArrayList<Movement>();
+		for (int i = 0; i < sMovs.length(); i++) {
+			String s = "" + sMovs.charAt(i);
+			for (Movement mov : Movement.values()) {
+				if (mov.toText().equals(s)) {
+					movs.add(mov);
+					break;
+				}
+			}
+		}
+		return move(movs);
 	}
 
 	protected CellContent getContent(Cell cell) {
