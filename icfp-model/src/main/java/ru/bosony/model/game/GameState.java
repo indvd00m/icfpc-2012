@@ -1,4 +1,4 @@
-package ru.bosony.model.mine;
+package ru.bosony.model.game;
 
 /**
  * @author 	indvdum (gotoindvdum[at]gmail[dot]com) <br>
