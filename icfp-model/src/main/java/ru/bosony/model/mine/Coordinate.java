@@ -24,7 +24,7 @@ public class Coordinate {
 		return new Coordinate(x - 1, y);
 	}
 	
-	public Coordinate top() {
+	public Coordinate up() {
 		return new Coordinate(x, y + 1);
 	}
 	
@@ -32,47 +32,47 @@ public class Coordinate {
 		return new Coordinate(x + 1, y);
 	}
 	
-	public Coordinate bottom() {
+	public Coordinate down() {
 		return new Coordinate(x, y - 1);
 	}
 	
-	public Coordinate leftAndTop() {
+	public Coordinate leftAndUp() {
 		return new Coordinate(x - 1, y + 1);
 	}
 	
-	public Coordinate rightAndTop() {
+	public Coordinate rightAndUp() {
 		return new Coordinate(x + 1, y + 1);
 	}
 	
-	public Coordinate rightAndBottom() {
+	public Coordinate rightAndDown() {
 		return new Coordinate(x + 1, y - 1);
 	}
 	
-	public Coordinate leftAndBottom() {
+	public Coordinate leftAndDown() {
 		return new Coordinate(x - 1, y - 1);
 	}
 	
 	public Set<Coordinate> getNeighboringCoordinates() {
 		Set<Coordinate> coords = new HashSet<Coordinate>();
 		coords.add(left());
-		coords.add(top());
+		coords.add(up());
 		coords.add(right());
-		coords.add(bottom());
-		coords.add(leftAndTop());
-		coords.add(rightAndTop());
-		coords.add(rightAndBottom());
-		coords.add(leftAndBottom());
+		coords.add(down());
+		coords.add(leftAndUp());
+		coords.add(rightAndUp());
+		coords.add(rightAndDown());
+		coords.add(leftAndDown());
 		return coords;
 	}
 	
 	public Movement getNecessaryMovement(Coordinate nCoordinate) {
 		if (left().equals(nCoordinate))
 			return Movement.LEFT;
-		if (top().equals(nCoordinate))
+		if (up().equals(nCoordinate))
 			return Movement.UP;
 		if (right().equals(nCoordinate))
 			return Movement.RIGHT;
-		if (bottom().equals(nCoordinate))
+		if (down().equals(nCoordinate))
 			return Movement.DOWN;
 		return null;
 	}
