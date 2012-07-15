@@ -158,7 +158,7 @@ public class Game {
 				if (getContent(curCell) == Rock && getContent(downCell) == Empty) {
 					getCell(curCoord, newCells).setContent(Empty);
 					getCell(downCoord, newCells).setContent(Rock);
-				} else if (getContent(curCell) == Rock && getContent(downCell) == Empty
+				} else if (getContent(curCell) == Rock && getContent(downCell) == Rock
 						&& getContent(rightCell) == Empty && getContent(rightAndDownCell) == Empty) {
 					getCell(curCoord, newCells).setContent(Empty);
 					getCell(rightAndDownCoord, newCells).setContent(Rock);
