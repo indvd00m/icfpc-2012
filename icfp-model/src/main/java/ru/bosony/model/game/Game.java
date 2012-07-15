@@ -30,6 +30,7 @@ public class Game {
 	protected GameState			state					= GameState.Game;
 	protected int				lambdaCollectedCount	= 0;
 	protected List<Movement>	route					= new ArrayList<Movement>();
+	protected int				underwater				= 0;
 
 	public Game(Mine mine) {
 		this.mine = mine;
@@ -166,12 +167,29 @@ public class Game {
 		robotCoord = mine.getRobotCell().getCoordinate();
 		if (getContent(mine.getCell(robotCoord.up())) != Rock && getContent(getCell(robotCoord.up(), newCells)) == Rock) {
 			mine.setCells(newCells);
+
 			lastScoreChange = score - prevScore;
 			state = GameState.Lose;
 			return state;
 		}
 
 		mine.setCells(newCells);
+
+		// Water flooding
+		robotCoord = mine.getRobotCell().getCoordinate();
+		if (robotCoord.y <= mine.getWaterLevel()) {
+			underwater++;
+		} else {
+			underwater = 0;
+		}
+		if (underwater > mine.getRobotWaterproof()) {
+			lastScoreChange = score - prevScore;
+			state = GameState.Lose;
+			return state;
+		}
+		if (mine.getFlooding() > 0 && route.size() % mine.getFlooding() == 0) {
+			mine.setWaterLevel(mine.getWaterLevel() + 1);
+		}
 
 		lastScoreChange = score - prevScore;
 		state = GameState.Game;
@@ -232,5 +250,9 @@ public class Game {
 			movs += mov.toText();
 		}
 		return movs;
+	}
+
+	public int getUnderwater() {
+		return underwater;
 	}
 }

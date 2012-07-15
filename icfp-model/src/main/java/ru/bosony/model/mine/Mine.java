@@ -10,6 +10,8 @@ import static ru.bosony.model.cellscontents.CellContent.Rock;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ru.bosony.model.cellscontents.CellContent;
 import ru.bosony.model.io.TextRepresentable;
@@ -23,9 +25,13 @@ import ru.bosony.model.moving.Movement;
  */
 public class Mine implements TextRepresentable {
 
-	protected Cell[][]	cells;
-	protected int		sizeX;
-	protected int		sizeY;
+	protected Cell[][]			cells;
+	protected int				sizeX;
+	protected int				sizeY;
+	protected int				waterLevel		= 0;
+	protected int				flooding		= 0;
+	protected int				robotWaterproof	= 10;
+	protected static Pattern	pattern			= Pattern.compile("(?s)(.*?)(\n\n)?(Water )?(\\d*)\n?(Flooding )?(\\d*)\n?(Waterproof )?(\\d*)");
 
 	public Mine(String text) {
 		fromText(text);
@@ -46,11 +52,22 @@ public class Mine implements TextRepresentable {
 			}
 			text += "\n";
 		}
-		return text.replaceAll("\n*$", "");
+		text = text.replaceAll("\n*$", "");
+		if (waterLevel != 0 || flooding != 0 || robotWaterproof != 10) {
+			text += "\n\n";
+			text += "Water " + waterLevel + "\n";
+			text += "Flooding " + flooding + "\n";
+			text += "Waterproof " + robotWaterproof;
+		}
+		return text;
 	}
 
-	protected void fromText(String text) {
-		String[] rows = text.split("\n+");
+	protected void fromText(String str) {
+		Matcher matcher = pattern.matcher(str);
+		if (!matcher.matches())
+			throw new RuntimeException("Can't parse mine from string");
+		String body = matcher.group(1);
+		String[] rows = body.split("\n+");
 		int y = rows.length;
 		int x = 0;
 		for (String row : rows) {
@@ -74,6 +91,16 @@ public class Mine implements TextRepresentable {
 				cells[curX][curY] = cell;
 			}
 		}
+		
+		String sWaterLevel = matcher.group(4);
+		String sFlooding = matcher.group(6);
+		String sRobotWaterproof = matcher.group(8);
+		if (sWaterLevel.length() > 0)
+			waterLevel = Integer.parseInt(sWaterLevel);
+		if (sFlooding.length() > 0)
+			flooding = Integer.parseInt(sFlooding);
+		if (sRobotWaterproof.length() > 0)
+			robotWaterproof = Integer.parseInt(sRobotWaterproof);
 	}
 
 	public Cell getCell(Coordinate coordinate) {
@@ -166,6 +193,22 @@ public class Mine implements TextRepresentable {
 			}
 		}
 		return clone;
+	}
+
+	public int getWaterLevel() {
+		return waterLevel;
+	}
+
+	public void setWaterLevel(int waterLevel) {
+		this.waterLevel = waterLevel;
+	}
+
+	public int getFlooding() {
+		return flooding;
+	}
+
+	public int getRobotWaterproof() {
+		return robotWaterproof;
 	}
 
 }

@@ -46,14 +46,16 @@ public class TextInterpreter {
 		writer.newLine();
 		writer.write("********************************************************************************");
 		writer.newLine();
-		writer.write("State: " + game.getState());
+		writer.write("State:      " + game.getState());
 		writer.newLine();
-		writer.write("Score: " + game.getScore() + " ("
+		writer.write("Score:      " + game.getScore() + " ("
 				+ (game.getLastScoreChange() >= 0 ? "+" + game.getLastScoreChange() : game.getLastScoreChange()) + ")");
 		writer.newLine();
-		writer.write("Steps: " + game.getRoute().size());
+		writer.write("Steps:      " + game.getRoute().size());
 		writer.newLine();
-		writer.write("Route: " + game.getStringRoute());
+		writer.write("Route:      " + game.getStringRoute());
+		writer.newLine();
+		writer.write("Underwater: " + game.getUnderwater() + " of " + mine.getRobotWaterproof());
 		writer.newLine();
 		writer.newLine();
 		writer.write(mine.toText());
@@ -67,7 +69,7 @@ public class TextInterpreter {
 		movs = movs.replaceAll(",\\s*$", "");
 		writer.write(movs);
 		writer.newLine();
-		writer.write("Print action(s): ");
+		writer.write("Enter action(s): ");
 		writer.flush();
 	}
 
