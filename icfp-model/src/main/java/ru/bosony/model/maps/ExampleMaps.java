@@ -353,6 +353,32 @@ public enum ExampleMaps {
 			"#.............#\n" + 
 			"#.........   .#\n" + 
 			"#############L#"
+			),
+	/**
+	 * <pre>
+			##L###########
+			#.....R#.**..#
+			#.*A...#..1..#
+			#.*....#.  \.#
+			#.\\\..#...\.#
+			#2.....**B...#
+			##############
+			
+			Trampoline A targets 1
+			Trampoline B targets 2
+	 * </pre>
+	 */
+	MAP_FROM_TRAMPOLINES_TASK(
+			"##L###########\n" + 
+			"#.....R#.**..#\n" + 
+			"#.*A...#..1..#\n" + 
+			"#.*....#.  \\.#\n" + 
+			"#.\\\\\\..#...\\.#\n" + 
+			"#2.....**B...#\n" + 
+			"##############\n" + 
+			"\n" + 
+			"Trampoline A targets 1\n" + 
+			"Trampoline B targets 2"
 			);
 
 	private String	map;

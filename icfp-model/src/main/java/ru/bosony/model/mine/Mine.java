@@ -28,14 +28,17 @@ public class Mine implements TextRepresentable {
 	protected Cell[][]			cells;
 	protected int				sizeX;
 	protected int				sizeY;
-	protected int				waterLevel			= 0;
-	protected int				flooding			= 0;
-	protected int				robotWaterproof		= 10;
-	protected static Pattern	minePattern			= Pattern
-															.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*)|$)");
-	protected static Pattern	waterPattern		= Pattern.compile("(?s).*(?<=.*Water )(\\d+).*");
-	protected static Pattern	floodingPattern		= Pattern.compile("(?s).*(?<=.*Flooding )(\\d+).*");
-	protected static Pattern	waterproofPattern	= Pattern.compile("(?s).*(?<=.*Waterproof )(\\d+).*");
+	protected int				waterLevel				= 0;
+	protected int				flooding				= 0;
+	protected int				robotWaterproof			= 10;
+	protected static Pattern	minePattern				= Pattern
+																.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*|Trampoline.*)|$)");
+	protected static Pattern	waterPattern			= Pattern.compile("(?s).*(?<=.*Water )(\\d+).*");
+	protected static Pattern	floodingPattern			= Pattern.compile("(?s).*(?<=.*Flooding )(\\d+).*");
+	protected static Pattern	waterproofPattern		= Pattern.compile("(?s).*(?<=.*Waterproof )(\\d+).*");
+	protected static Pattern	trampolinePattern		= Pattern
+																.compile("(?s).*?Trampoline ([A-I]) targets ([1-9]).*");
+	protected static String		firstTrampolineRegexp	= "(?s).*?Trampoline ([A-I]) targets ([1-9])";
 
 	public Mine(String text) {
 		fromText(text);
@@ -57,12 +60,18 @@ public class Mine implements TextRepresentable {
 			text += "\n";
 		}
 		text = text.replaceAll("\n*$", "");
+		text += "\n\n";
 		if (waterLevel != 0 || flooding != 0 || robotWaterproof != 10) {
-			text += "\n\n";
 			text += "Water " + waterLevel + "\n";
 			text += "Flooding " + flooding + "\n";
-			text += "Waterproof " + robotWaterproof;
+			text += "Waterproof " + robotWaterproof + "\n";
 		}
+		for (CellContent trampoline : CellContent.values()) {
+			if (trampoline.getTrampolineTarget() != null)
+				text += "Trampoline " + trampoline.toText() + " targets " + trampoline.getTrampolineTarget().toText()
+						+ "\n";
+		}
+		text = text.replaceAll("\n*$", "");
 		return text;
 	}
 
@@ -97,27 +106,46 @@ public class Mine implements TextRepresentable {
 		}
 
 		String metadata = matcher.group(3);
-		String sWaterLevel = "";
-		String sFlooding = "";
-		String sRobotWaterproof = "";
-		Matcher waterMatcher = waterPattern.matcher(metadata);
-		if (waterMatcher.matches()) {
-			sWaterLevel = waterMatcher.group(1);
+		if (metadata != null) {
+			// Water flooding
+			String sWaterLevel = "";
+			String sFlooding = "";
+			String sRobotWaterproof = "";
+			Matcher waterMatcher = waterPattern.matcher(metadata);
+			if (waterMatcher.matches()) {
+				sWaterLevel = waterMatcher.group(1);
+			}
+			Matcher floodingMatcher = floodingPattern.matcher(metadata);
+			if (floodingMatcher.matches()) {
+				sFlooding = floodingMatcher.group(1);
+			}
+			Matcher waterproofMatcher = waterproofPattern.matcher(metadata);
+			if (waterproofMatcher.matches()) {
+				sRobotWaterproof = waterproofMatcher.group(1);
+			}
+			if (sWaterLevel.length() > 0)
+				waterLevel = Integer.parseInt(sWaterLevel);
+			if (sFlooding.length() > 0)
+				flooding = Integer.parseInt(sFlooding);
+			if (sRobotWaterproof.length() > 0)
+				robotWaterproof = Integer.parseInt(sRobotWaterproof);
+
+			// Trampolines and targets
+			String trampolines = metadata;
+			while (true) {
+				Matcher trampolineMatcher = trampolinePattern.matcher(trampolines);
+				if (trampolineMatcher.matches()) {
+					String sTrampoline = trampolineMatcher.group(1);
+					String sTarget = trampolineMatcher.group(2);
+					CellContent trampoline = CellContent.fromText(sTrampoline);
+					CellContent target = CellContent.fromText(sTarget);
+					if (trampoline != null && target != null)
+						trampoline.setTrampolineTarget(target);
+				} else
+					break;
+				trampolines = trampolines.replaceFirst(firstTrampolineRegexp, "");
+			}
 		}
-		Matcher floodingMatcher = floodingPattern.matcher(metadata);
-		if (floodingMatcher.matches()) {
-			sFlooding = floodingMatcher.group(1);
-		}
-		Matcher waterproofMatcher = waterproofPattern.matcher(metadata);
-		if (waterproofMatcher.matches()) {
-			sRobotWaterproof = waterproofMatcher.group(1);
-		}
-		if (sWaterLevel.length() > 0)
-			waterLevel = Integer.parseInt(sWaterLevel);
-		if (sFlooding.length() > 0)
-			flooding = Integer.parseInt(sFlooding);
-		if (sRobotWaterproof.length() > 0)
-			robotWaterproof = Integer.parseInt(sRobotWaterproof);
 	}
 
 	public Cell getCell(Coordinate coordinate) {

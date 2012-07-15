@@ -114,6 +114,20 @@ public class Game {
 				&& getContent(mine.getCell(nextRobotCoord.left())) == Empty) {
 			moveRobot(nextRobotCell);
 			mine.getCell(nextRobotCoord.left()).setContent(Rock);
+		} else if (CellContent.getTrampolines().contains(nextRobotCellContent)
+				&& CellContent.getTargets().contains(nextRobotCellContent.getTrampolineTarget())) {
+			CellContent trampoline = nextRobotCellContent;
+			CellContent target = trampoline.getTrampolineTarget();
+			for (Cell targetCell : mine.findCells(target)) {
+				moveRobot(targetCell);
+			}
+			for (CellContent tramp : CellContent.getTrampolines()) {
+				if (tramp.getTrampolineTarget() == target) {
+					for (Cell trampolineCell : mine.findCells(tramp)) {
+						trampolineCell.setContent(Empty);
+					}
+				}
+			}
 		} else {
 			mov = Movement.WAIT;
 		}
