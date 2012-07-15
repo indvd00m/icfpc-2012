@@ -28,21 +28,23 @@ public class Mine implements TextRepresentable {
 	protected Cell[][]			cells;
 	protected int				sizeX;
 	protected int				sizeY;
-	protected int				waterLevel				= 0;
-	protected int				flooding				= 0;
-	protected int				robotWaterproof			= 10;
-	protected int				growth					= 25;
-	protected int				razorsCount				= 0;
-	protected static Pattern	minePattern				= Pattern
-																.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*|Trampoline.*|Growth.*|Razors.*)|$)");
-	protected static Pattern	waterPattern			= Pattern.compile("(?s).*(?<=.*Water )(\\d+).*");
-	protected static Pattern	floodingPattern			= Pattern.compile("(?s).*(?<=.*Flooding )(\\d+).*");
-	protected static Pattern	waterproofPattern		= Pattern.compile("(?s).*(?<=.*Waterproof )(\\d+).*");
-	protected static Pattern	growthPattern			= Pattern.compile("(?s).*(?<=.*Growth )(\\d+).*");
-	protected static Pattern	razorsPattern			= Pattern.compile("(?s).*(?<=.*Razors )(\\d+).*");
-	protected static Pattern	trampolinePattern		= Pattern
-																.compile("(?s).*?Trampoline ([A-I]) targets ([1-9]).*");
-	protected static String		firstTrampolineRegexp	= "(?s).*?Trampoline ([A-I]) targets ([1-9])";
+	protected int				waterLevel							= 0;
+	protected int				flooding							= 0;
+	protected int				robotWaterproof						= 10;
+	protected int				growth								= 25;
+	protected int				razorsCount							= 0;
+	protected int				lambdasAndHighOrderRocksStartCount	= 0;
+	protected static Pattern	minePattern							= Pattern
+																			.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*|Trampoline.*|Growth.*|Razors.*)|$)");
+	protected static Pattern	waterPattern						= Pattern.compile("(?s).*(?<=.*Water )(\\d+).*");
+	protected static Pattern	floodingPattern						= Pattern.compile("(?s).*(?<=.*Flooding )(\\d+).*");
+	protected static Pattern	waterproofPattern					= Pattern
+																			.compile("(?s).*(?<=.*Waterproof )(\\d+).*");
+	protected static Pattern	growthPattern						= Pattern.compile("(?s).*(?<=.*Growth )(\\d+).*");
+	protected static Pattern	razorsPattern						= Pattern.compile("(?s).*(?<=.*Razors )(\\d+).*");
+	protected static Pattern	trampolinePattern					= Pattern
+																			.compile("(?s).*?Trampoline ([A-I]) targets ([1-9]).*");
+	protected static String		firstTrampolineRegexp				= "(?s).*?Trampoline ([A-I]) targets ([1-9])";
 
 	public Mine(String text) {
 		fromText(text);
@@ -52,6 +54,7 @@ public class Mine implements TextRepresentable {
 			throw new RuntimeException("New map does not contain a robot!");
 		if (findCells(ClosedLambdaLift).size() != 1)
 			throw new RuntimeException("New map does not contain a ClosedLambdaLift!");
+		lambdasAndHighOrderRocksStartCount = findCells(Lambda).size() + findCells(CellContent.HighOrderRock).size();
 	}
 
 	@Override
@@ -292,6 +295,10 @@ public class Mine implements TextRepresentable {
 
 	public void setRazorsCount(int razorsCount) {
 		this.razorsCount = razorsCount;
+	}
+
+	public int getLambdasAndHighOrderRocksStartCount() {
+		return lambdasAndHighOrderRocksStartCount;
 	}
 
 }

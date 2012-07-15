@@ -3,11 +3,12 @@ package ru.bosony.model.game;
 import static ru.bosony.model.cellscontents.CellContent.ClosedLambdaLift;
 import static ru.bosony.model.cellscontents.CellContent.Earth;
 import static ru.bosony.model.cellscontents.CellContent.Empty;
+import static ru.bosony.model.cellscontents.CellContent.HighOrderRock;
+import static ru.bosony.model.cellscontents.CellContent.HuttonsRazor;
 import static ru.bosony.model.cellscontents.CellContent.Lambda;
 import static ru.bosony.model.cellscontents.CellContent.MiningRobot;
 import static ru.bosony.model.cellscontents.CellContent.OpenLambdaLift;
 import static ru.bosony.model.cellscontents.CellContent.Rock;
-import static ru.bosony.model.cellscontents.CellContent.HuttonsRazor;
 import static ru.bosony.model.cellscontents.CellContent.WadlersBeard;
 
 import java.util.ArrayList;
@@ -130,6 +131,14 @@ public class Game {
 				&& getContent(mine.getCell(nextRobotCoord.left())) == Empty) {
 			moveRobot(nextRobotCell);
 			mine.getCell(nextRobotCoord.left()).setContent(Rock);
+		} else if (robotCoord.right().equals(nextRobotCoord) && nextRobotCellContent == HighOrderRock
+				&& getContent(mine.getCell(nextRobotCoord.right())) == Empty) {
+			moveRobot(nextRobotCell);
+			mine.getCell(nextRobotCoord.right()).setContent(HighOrderRock);
+		} else if (robotCoord.left().equals(nextRobotCoord) && nextRobotCellContent == HighOrderRock
+				&& getContent(mine.getCell(nextRobotCoord.left())) == Empty) {
+			moveRobot(nextRobotCell);
+			mine.getCell(nextRobotCoord.left()).setContent(HighOrderRock);
 		} else if (CellContent.getTrampolines().contains(nextRobotCellContent)
 				&& CellContent.getTargets().contains(nextRobotCellContent.getTrampolineTarget())) {
 			CellContent trampoline = nextRobotCellContent;
@@ -174,20 +183,53 @@ public class Game {
 				if (getContent(curCell) == Rock && getContent(downCell) == Empty) {
 					getCell(curCoord, newCells).setContent(Empty);
 					getCell(downCoord, newCells).setContent(Rock);
-				} else if (getContent(curCell) == Rock && getContent(downCell) == Rock
+				} else if (getContent(curCell) == HighOrderRock && getContent(downCell) == Empty) {
+					getCell(curCoord, newCells).setContent(Empty);
+					if (getContent(mine.getCell(downCoord.down())) != Empty)
+						getCell(downCoord, newCells).setContent(Lambda);
+					else
+						getCell(downCoord, newCells).setContent(HighOrderRock);
+				} else if (getContent(curCell) == Rock
+						&& (getContent(downCell) == Rock || getContent(downCell) == HighOrderRock)
 						&& getContent(rightCell) == Empty && getContent(rightAndDownCell) == Empty) {
 					getCell(curCoord, newCells).setContent(Empty);
 					getCell(rightAndDownCoord, newCells).setContent(Rock);
-				} else if (getContent(curCell) == Rock && getContent(downCell) == Rock
+				} else if (getContent(curCell) == HighOrderRock
+						&& (getContent(downCell) == Rock || getContent(downCell) == HighOrderRock)
+						&& getContent(rightCell) == Empty && getContent(rightAndDownCell) == Empty) {
+					getCell(curCoord, newCells).setContent(Empty);
+					if (getContent(mine.getCell(rightAndDownCoord.down())) != Empty)
+						getCell(rightAndDownCoord, newCells).setContent(Lambda);
+					else
+						getCell(rightAndDownCoord, newCells).setContent(HighOrderRock);
+				} else if (getContent(curCell) == Rock
+						&& (getContent(downCell) == Rock || getContent(downCell) == HighOrderRock)
 						&& (getContent(rightCell) != Empty || getContent(rightAndDownCell) != Empty)
 						&& getContent(leftCell) == Empty && getContent(leftAndDownCell) == Empty) {
 					getCell(curCoord, newCells).setContent(Empty);
 					getCell(leftAndDownCoord, newCells).setContent(Rock);
+				} else if (getContent(curCell) == HighOrderRock
+						&& (getContent(downCell) == Rock || getContent(downCell) == HighOrderRock)
+						&& (getContent(rightCell) != Empty || getContent(rightAndDownCell) != Empty)
+						&& getContent(leftCell) == Empty && getContent(leftAndDownCell) == Empty) {
+					getCell(curCoord, newCells).setContent(Empty);
+					if (getContent(mine.getCell(leftAndDownCoord.down())) != Empty)
+						getCell(leftAndDownCoord, newCells).setContent(Lambda);
+					else
+						getCell(leftAndDownCoord, newCells).setContent(HighOrderRock);
 				} else if (getContent(curCell) == Rock && getContent(downCell) == Lambda
 						&& getContent(rightCell) == Empty && getContent(rightAndDownCell) == Empty) {
 					getCell(curCoord, newCells).setContent(Empty);
 					getCell(rightAndDownCoord, newCells).setContent(Rock);
-				} else if (getContent(curCell) == ClosedLambdaLift && mine.findCells(Lambda).size() == 0) {
+				} else if (getContent(curCell) == HighOrderRock && getContent(downCell) == Lambda
+						&& getContent(rightCell) == Empty && getContent(rightAndDownCell) == Empty) {
+					getCell(curCoord, newCells).setContent(Empty);
+					if (getContent(mine.getCell(rightAndDownCoord.down())) != Empty)
+						getCell(rightAndDownCoord, newCells).setContent(Lambda);
+					else
+						getCell(rightAndDownCoord, newCells).setContent(HighOrderRock);
+				} else if (getContent(curCell) == ClosedLambdaLift
+						&& mine.getLambdasAndHighOrderRocksStartCount() == lambdaCollectedCount) {
 					getCell(curCoord, newCells).setContent(OpenLambdaLift);
 				} else if (getContent(curCell) == WadlersBeard && mine.getGrowth() > 0
 						&& route.size() % mine.getGrowth() == 0) {
@@ -213,7 +255,11 @@ public class Game {
 
 		// Other ending conditions
 		robotCoord = mine.getRobotCell().getCoordinate();
-		if (getContent(mine.getCell(robotCoord.up())) != Rock && getContent(getCell(robotCoord.up(), newCells)) == Rock) {
+		if (getContent(mine.getCell(robotCoord.up())) != Rock && getContent(getCell(robotCoord.up(), newCells)) == Rock
+				|| getContent(mine.getCell(robotCoord.up())) != HighOrderRock
+				&& getContent(getCell(robotCoord.up(), newCells)) == HighOrderRock
+				|| getContent(mine.getCell(robotCoord.up())) == Empty
+				&& getContent(getCell(robotCoord.up(), newCells)) == Lambda) {
 			mine.setCells(newCells);
 
 			lastScoreChange = score - prevScore;

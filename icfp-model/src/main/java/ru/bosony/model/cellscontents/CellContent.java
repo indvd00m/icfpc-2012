@@ -39,7 +39,8 @@ public enum CellContent implements TextRepresentable {
 	Target8("8"),
 	Target9("9"),
 	WadlersBeard("W"),
-	HuttonsRazor("!");
+	HuttonsRazor("!"),
+	HighOrderRock("@");
 
 	private String					text;
 	private CellContent				trampolineTarget	= null;
