@@ -51,6 +51,8 @@ public class TextInterpreter {
 		writer.write("Score: " + game.getScore() + " ("
 				+ (game.getLastScoreChange() >= 0 ? "+" + game.getLastScoreChange() : game.getLastScoreChange()) + ")");
 		writer.newLine();
+		writer.write("Steps: " + game.getRoute().size());
+		writer.newLine();
 		writer.write("Route: " + game.getStringRoute());
 		writer.newLine();
 		writer.newLine();
@@ -60,9 +62,9 @@ public class TextInterpreter {
 		writer.write("Available actions: ");
 		String movs = "";
 		for (Movement mov : Movement.values()) {
-			movs += mov.toText() + ", ";
+			movs += mov.toText() + " (" + mov.toString().toLowerCase() + "), ";
 		}
-		movs = movs.replaceAll(",\\\\s*$", "");
+		movs = movs.replaceAll(",\\s*$", "");
 		writer.write(movs);
 		writer.newLine();
 		writer.write("Print action(s): ");

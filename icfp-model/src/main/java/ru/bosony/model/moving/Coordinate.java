@@ -1,9 +1,8 @@
-package ru.bosony.model.mine;
+package ru.bosony.model.moving;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import ru.bosony.model.moving.Movement;
 
 /**
  * @author 	indvdum (gotoindvdum[at]gmail[dot]com) <br>

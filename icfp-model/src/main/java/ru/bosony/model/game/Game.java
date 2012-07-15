@@ -9,13 +9,12 @@ import static ru.bosony.model.cellscontents.CellContent.OpenLambdaLift;
 import static ru.bosony.model.cellscontents.CellContent.Rock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ru.bosony.model.cellscontents.CellContent;
 import ru.bosony.model.mine.Cell;
-import ru.bosony.model.mine.Coordinate;
 import ru.bosony.model.mine.Mine;
+import ru.bosony.model.moving.Coordinate;
 import ru.bosony.model.moving.Movement;
 
 /**
@@ -25,8 +24,7 @@ import ru.bosony.model.moving.Movement;
  */
 public class Game {
 
-	Mine						mine					= null;
-	private Cell[][]			prevStepCells;
+	protected Mine				mine					= null;
 	protected int				score					= 0;
 	protected int				lastScoreChange			= 0;
 	protected GameState			state					= GameState.Game;
@@ -56,7 +54,6 @@ public class Game {
 	protected void moveRobot(Cell nextRobotCell) {
 		mine.getRobotCell().setContent(Empty);
 		nextRobotCell.setContent(MiningRobot);
-		mine.setRobotCell(nextRobotCell);
 	}
 
 	public GameState move(Movement mov) {
@@ -69,6 +66,7 @@ public class Game {
 
 		// Moving and scoring
 		route.add(mov);
+		Coordinate robotCoord = mine.getRobotCell().getCoordinate();
 		Coordinate nextRobotCoord = null;
 		switch (mov) {
 		case ABORT:
@@ -80,16 +78,16 @@ public class Game {
 		case WAIT:
 			break;
 		case LEFT:
-			nextRobotCoord = mine.getRobotCell().getCoordinate().left();
+			nextRobotCoord = robotCoord.left();
 			break;
 		case UP:
-			nextRobotCoord = mine.getRobotCell().getCoordinate().up();
+			nextRobotCoord = robotCoord.up();
 			break;
 		case RIGHT:
-			nextRobotCoord = mine.getRobotCell().getCoordinate().right();
+			nextRobotCoord = robotCoord.right();
 			break;
 		case DOWN:
-			nextRobotCoord = mine.getRobotCell().getCoordinate().down();
+			nextRobotCoord = robotCoord.down();
 			break;
 		}
 		Cell nextRobotCell = mine.getCell(nextRobotCoord);
@@ -107,11 +105,11 @@ public class Game {
 			lastScoreChange = score - prevScore;
 			state = GameState.Win;
 			return state;
-		} else if (mine.getRobotCell().getCoordinate().right() == nextRobotCoord && nextRobotCellContent == Rock
+		} else if (robotCoord.right() == nextRobotCoord && nextRobotCellContent == Rock
 				&& getContent(mine.getCell(nextRobotCoord.right())) == Empty) {
 			moveRobot(nextRobotCell);
 			mine.getCell(nextRobotCoord.right()).setContent(Rock);
-		} else if (mine.getRobotCell().getCoordinate().left() == nextRobotCoord && nextRobotCellContent == Rock
+		} else if (robotCoord.left() == nextRobotCoord && nextRobotCellContent == Rock
 				&& getContent(mine.getCell(nextRobotCoord.left())) == Empty) {
 			moveRobot(nextRobotCell);
 			mine.getCell(nextRobotCoord.left()).setContent(Rock);
@@ -119,16 +117,8 @@ public class Game {
 			mov = Movement.WAIT;
 		}
 
-		// Other ending conditions
-		if (getContent(getCell(mine.getRobotCell().getCoordinate().up(), prevStepCells)) != Rock
-				&& getContent(mine.getCell(mine.getRobotCell().getCoordinate().up())) == Rock) {
-			lastScoreChange = score - prevScore;
-			state = GameState.Lose;
-			return state;
-		}
-
 		// World changes
-		Cell[][] newCells = Arrays.copyOf(mine.getCells(), mine.getCells().length);
+		Cell[][] newCells = mine.cloneCells();
 		for (int y = 1; y <= mine.getSizeY(); y++) {
 			for (int x = 1; x <= mine.getSizeX(); x++) {
 				Coordinate curCoord = new Coordinate(x, y);
@@ -171,7 +161,16 @@ public class Game {
 				}
 			}
 		}
-		prevStepCells = mine.getCells();
+
+		// Other ending conditions
+		robotCoord = mine.getRobotCell().getCoordinate();
+		if (getContent(mine.getCell(robotCoord.up())) != Rock && getContent(getCell(robotCoord.up(), newCells)) == Rock) {
+			mine.setCells(newCells);
+			lastScoreChange = score - prevScore;
+			state = GameState.Lose;
+			return state;
+		}
+
 		mine.setCells(newCells);
 
 		lastScoreChange = score - prevScore;

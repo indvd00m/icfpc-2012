@@ -1,13 +1,14 @@
 package ru.bosony.model.mine;
 
 import ru.bosony.model.cellscontents.CellContent;
+import ru.bosony.model.moving.Coordinate;
 
 /**
  * @author indvdum (gotoindvdum[at]gmail[dot]com) <br>
  *         13.07.2012 22:10:18
  * 
  */
-public class Cell {
+public class Cell implements Cloneable {
 
 	protected Coordinate	coordinate;
 	protected CellContent	content;
@@ -27,6 +28,12 @@ public class Cell {
 
 	public Coordinate getCoordinate() {
 		return coordinate;
+	}
+
+	@Override
+	protected Cell clone() throws CloneNotSupportedException {
+		Cell clone = new Cell(coordinate, content);
+		return clone;
 	}
 
 }

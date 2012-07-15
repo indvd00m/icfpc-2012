@@ -13,6 +13,7 @@ import java.util.Set;
 
 import ru.bosony.model.cellscontents.CellContent;
 import ru.bosony.model.io.TextRepresentable;
+import ru.bosony.model.moving.Coordinate;
 import ru.bosony.model.moving.Movement;
 
 /**
@@ -25,7 +26,6 @@ public class Mine implements TextRepresentable {
 	protected Cell[][]	cells;
 	protected int		sizeX;
 	protected int		sizeY;
-	protected Cell		robotCell;
 
 	public Mine(String text) {
 		fromText(text);
@@ -35,8 +35,6 @@ public class Mine implements TextRepresentable {
 			throw new RuntimeException("New map does not contain a robot!");
 		if (findCells(ClosedLambdaLift).size() != 1)
 			throw new RuntimeException("New map does not contain a ClosedLambdaLift!");
-		for (Cell cell : findCells(MiningRobot))
-			robotCell = cell;
 	}
 
 	@Override
@@ -70,6 +68,8 @@ public class Mine implements TextRepresentable {
 					content = CellContent.fromText("" + row.charAt(curX));
 				else
 					content = Empty;
+				if (content == null)
+					content = Empty;
 				Cell cell = new Cell(new Coordinate(curX + 1, rows.length - curY), content);
 				cells[curX][curY] = cell;
 			}
@@ -101,6 +101,7 @@ public class Mine implements TextRepresentable {
 
 	public Set<Movement> getAvailableRobotMovements() {
 		Set<Movement> movs = new HashSet<Movement>();
+		Cell robotCell = getRobotCell();
 		Set<Cell> nCells = getNeighboringCells(robotCell);
 		for (Cell nCell : nCells) {
 			CellContent nContent = nCell.getContent();
@@ -142,20 +143,29 @@ public class Mine implements TextRepresentable {
 		return finded;
 	}
 
-	public Cell[][] getCells() {
-		return cells;
-	}
-
 	public void setCells(Cell[][] cells) {
 		this.cells = cells;
 	}
 
 	public Cell getRobotCell() {
-		return robotCell;
+		for (Cell cell : findCells(MiningRobot)) {
+			return cell;
+		}
+		throw new RuntimeException("Where is robot!?");
 	}
 
-	public void setRobotCell(Cell robotCell) {
-		this.robotCell = robotCell;
+	public Cell[][] cloneCells() {
+		Cell[][] clone = new Cell[sizeX][sizeY];
+		for (int y = sizeY - 1; y >= 0; y--) {
+			for (int x = 0; x < sizeX; x++) {
+				try {
+					clone[x][y] = cells[x][y].clone();
+				} catch (CloneNotSupportedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		return clone;
 	}
 
 }
