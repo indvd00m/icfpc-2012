@@ -17,7 +17,7 @@ public class TestScore {
 		Mine mine = new Mine(map);
 		Game game = new Game(mine);
 		game.move(Movement.ABORT);
-		assertEquals(game.getScore(), -1);
+		assertEquals(game.getScore(), 0);
 	}
 
 }
