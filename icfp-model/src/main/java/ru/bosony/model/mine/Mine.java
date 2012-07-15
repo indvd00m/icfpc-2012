@@ -34,6 +34,7 @@ public class Mine implements TextRepresentable {
 	protected int				growth								= 25;
 	protected int				razorsCount							= 0;
 	protected int				lambdasAndHighOrderRocksStartCount	= 0;
+	protected String			metadata							= "";
 	protected static Pattern	minePattern							= Pattern
 																			.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*|Trampoline.*|Growth.*|Razors.*)|$)");
 	protected static Pattern	waterPattern						= Pattern.compile("(?s).*(?<=.*Water )(\\d+).*");
@@ -68,22 +69,7 @@ public class Mine implements TextRepresentable {
 		}
 		text = text.replaceAll("\n*$", "");
 		text += "\n\n";
-		if (waterLevel != 0) {
-			text += "Water " + waterLevel + "\n";
-		}
-		if (flooding != 0) {
-			text += "Flooding " + flooding + "\n";
-		}
-		text += "Waterproof " + robotWaterproof + "\n";
-		for (CellContent trampoline : CellContent.values()) {
-			if (trampoline.getTrampolineTarget() != null)
-				text += "Trampoline " + trampoline.toText() + " targets " + trampoline.getTrampolineTarget().toText()
-						+ "\n";
-		}
-		text += "Growth " + growth + "\n";
-		if (razorsCount != 0) {
-			text += "Razors " + razorsCount + "\n";
-		}
+		text += metadata;
 		text = text.replaceAll("\n*$", "");
 		return text;
 	}
@@ -118,7 +104,7 @@ public class Mine implements TextRepresentable {
 			}
 		}
 
-		String metadata = matcher.group(3);
+		metadata = matcher.group(3);
 		if (metadata != null) {
 			// Water flooding
 			String sWaterLevel = "";
@@ -174,7 +160,8 @@ public class Mine implements TextRepresentable {
 				growth = Integer.parseInt(sGrowth);
 			if (sRazors.length() > 0)
 				razorsCount = Integer.parseInt(sRazors);
-		}
+		} else
+			metadata = "";
 	}
 
 	public Cell getCell(Coordinate coordinate) {
