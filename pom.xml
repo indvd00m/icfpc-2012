@@ -35,6 +35,21 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>${maven-resources-plugin.version}</version>
@@ -53,8 +68,20 @@
 			</dependency>
 			<dependency>
 				<groupId>ru.bosony.icfp-2012</groupId>
+				<artifactId>icfp-model</artifactId>
+				<version>${project.version}</version>
+				<classifier>sources</classifier>
+			</dependency>
+			<dependency>
+				<groupId>ru.bosony.icfp-2012</groupId>
 				<artifactId>icfp-interpreter</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ru.bosony.icfp-2012</groupId>
+				<artifactId>icfp-interpreter</artifactId>
+				<version>${project.version}</version>
+				<classifier>sources</classifier>
 			</dependency>
 			<dependency>
 				<groupId>ru.bosony.icfp-2012</groupId>
@@ -63,8 +90,20 @@
 			</dependency>
 			<dependency>
 				<groupId>ru.bosony.icfp-2012</groupId>
+				<artifactId>icfp-solver</artifactId>
+				<version>${project.version}</version>
+				<classifier>sources</classifier>
+			</dependency>
+			<dependency>
+				<groupId>ru.bosony.icfp-2012</groupId>
 				<artifactId>icfp-submit</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ru.bosony.icfp-2012</groupId>
+				<artifactId>icfp-submit</artifactId>
+				<version>${project.version}</version>
+				<classifier>sources</classifier>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

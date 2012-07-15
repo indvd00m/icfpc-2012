@@ -1,6 +1,7 @@
 package ru.bosony.solvers;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import ru.bosony.model.mine.Mine;
@@ -20,11 +21,13 @@ public class Solver {
 		writer = new BufferedWriter(new OutputStreamWriter(System.out));
 	}
 
-	public void start() {
-
+	public void start() throws IOException {
+		// TODO solver
+		writer.write("A");
+		writer.flush();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String map = "";
 		for (String arg : args) {
 			map += arg + "\n";

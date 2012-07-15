@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>icfp-submit</artifactId>
+	<name>icfp-submit</name>
+	<packaging>jar</packaging>
+	<description>icfp-submit</description>
+	<parent>
+		<groupId>ru.bosony.icfp-2012</groupId>
+		<artifactId>icfp-2012-all</artifactId>
+		<version>0.0.1.0-SNAPSHOT</version>
+	</parent>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+					<finalName>icfp-xxxxxxxx</finalName>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<configuration>
+							<target>
+								<move todir="${project.build.directory}">
+									<fileset dir="${project.build.directory}/">
+										<include name="**/*.tar.gz" />
+									</fileset>
+									<mapper type="glob" from="*.tar.gz" to="*.tgz" />
+								</move>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>ru.bosony.icfp-2012</groupId>
+			<artifactId>icfp-solver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ru.bosony.icfp-2012</groupId>
+			<artifactId>icfp-solver</artifactId>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ru.bosony.icfp-2012</groupId>
+			<artifactId>icfp-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ru.bosony.icfp-2012</groupId>
+			<artifactId>icfp-model</artifactId>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ru.bosony.icfp-2012</groupId>
+			<artifactId>icfp-interpreter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ru.bosony.icfp-2012</groupId>
+			<artifactId>icfp-interpreter</artifactId>
+			<classifier>sources</classifier>
+		</dependency>
+	</dependencies>
+</project>
