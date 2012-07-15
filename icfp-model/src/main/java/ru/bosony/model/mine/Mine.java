@@ -28,10 +28,14 @@ public class Mine implements TextRepresentable {
 	protected Cell[][]			cells;
 	protected int				sizeX;
 	protected int				sizeY;
-	protected int				waterLevel		= 0;
-	protected int				flooding		= 0;
-	protected int				robotWaterproof	= 10;
-	protected static Pattern	pattern			= Pattern.compile("(?s)(.*?)(\n\n)?(Water )?(\\d*)\n?(Flooding )?(\\d*)\n?(Waterproof )?(\\d*)");
+	protected int				waterLevel			= 0;
+	protected int				flooding			= 0;
+	protected int				robotWaterproof		= 10;
+	protected static Pattern	minePattern			= Pattern
+															.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*)|$)");
+	protected static Pattern	waterPattern		= Pattern.compile("(?s).*(?<=.*Water )(\\d+).*");
+	protected static Pattern	floodingPattern		= Pattern.compile("(?s).*(?<=.*Flooding )(\\d+).*");
+	protected static Pattern	waterproofPattern	= Pattern.compile("(?s).*(?<=.*Waterproof )(\\d+).*");
 
 	public Mine(String text) {
 		fromText(text);
@@ -63,7 +67,7 @@ public class Mine implements TextRepresentable {
 	}
 
 	protected void fromText(String str) {
-		Matcher matcher = pattern.matcher(str);
+		Matcher matcher = minePattern.matcher(str);
 		if (!matcher.matches())
 			throw new RuntimeException("Can't parse mine from string");
 		String body = matcher.group(1);
@@ -91,10 +95,23 @@ public class Mine implements TextRepresentable {
 				cells[curX][curY] = cell;
 			}
 		}
-		
-		String sWaterLevel = matcher.group(4);
-		String sFlooding = matcher.group(6);
-		String sRobotWaterproof = matcher.group(8);
+
+		String metadata = matcher.group(3);
+		String sWaterLevel = "";
+		String sFlooding = "";
+		String sRobotWaterproof = "";
+		Matcher waterMatcher = waterPattern.matcher(metadata);
+		if (waterMatcher.matches()) {
+			sWaterLevel = waterMatcher.group(1);
+		}
+		Matcher floodingMatcher = floodingPattern.matcher(metadata);
+		if (floodingMatcher.matches()) {
+			sFlooding = floodingMatcher.group(1);
+		}
+		Matcher waterproofMatcher = waterproofPattern.matcher(metadata);
+		if (waterproofMatcher.matches()) {
+			sRobotWaterproof = waterproofMatcher.group(1);
+		}
 		if (sWaterLevel.length() > 0)
 			waterLevel = Integer.parseInt(sWaterLevel);
 		if (sFlooding.length() > 0)
