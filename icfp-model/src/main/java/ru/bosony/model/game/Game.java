@@ -62,7 +62,6 @@ public class Game {
 
 		// Score
 		int prevScore = score;
-		score--;
 
 		// Moving and scoring
 		route.add(mov);
@@ -90,6 +89,7 @@ public class Game {
 			nextRobotCoord = robotCoord.down();
 			break;
 		}
+		score--;
 		Cell nextRobotCell = mine.getCell(nextRobotCoord);
 		CellContent nextRobotCellContent = getContent(nextRobotCell);
 		if (nextRobotCellContent == Empty || nextRobotCellContent == Earth) {
@@ -105,11 +105,11 @@ public class Game {
 			lastScoreChange = score - prevScore;
 			state = GameState.Win;
 			return state;
-		} else if (robotCoord.right() == nextRobotCoord && nextRobotCellContent == Rock
+		} else if (robotCoord.right().equals(nextRobotCoord) && nextRobotCellContent == Rock
 				&& getContent(mine.getCell(nextRobotCoord.right())) == Empty) {
 			moveRobot(nextRobotCell);
 			mine.getCell(nextRobotCoord.right()).setContent(Rock);
-		} else if (robotCoord.left() == nextRobotCoord && nextRobotCellContent == Rock
+		} else if (robotCoord.left().equals(nextRobotCoord) && nextRobotCellContent == Rock
 				&& getContent(mine.getCell(nextRobotCoord.left())) == Empty) {
 			moveRobot(nextRobotCell);
 			mine.getCell(nextRobotCoord.left()).setContent(Rock);
