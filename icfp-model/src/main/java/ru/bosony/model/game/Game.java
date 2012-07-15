@@ -7,6 +7,8 @@ import static ru.bosony.model.cellscontents.CellContent.Lambda;
 import static ru.bosony.model.cellscontents.CellContent.MiningRobot;
 import static ru.bosony.model.cellscontents.CellContent.OpenLambdaLift;
 import static ru.bosony.model.cellscontents.CellContent.Rock;
+import static ru.bosony.model.cellscontents.CellContent.HuttonsRazor;
+import static ru.bosony.model.cellscontents.CellContent.WadlersBeard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +68,8 @@ public class Game {
 
 		// Moving and scoring
 		route.add(mov);
-		Coordinate robotCoord = mine.getRobotCell().getCoordinate();
+		Cell robotCell = mine.getRobotCell();
+		Coordinate robotCoord = robotCell.getCoordinate();
 		Coordinate nextRobotCoord = null;
 		switch (mov) {
 		case ABORT:
@@ -76,6 +79,16 @@ public class Game {
 			state = GameState.Abort;
 			return state;
 		case WAIT:
+			break;
+		case RAZOR:
+			if (mine.getRazorsCount() > 0) {
+				for (Cell cell : mine.getNeighboringCells(robotCell)) {
+					if (cell.getContent() == WadlersBeard) {
+						cell.setContent(Empty);
+					}
+				}
+				mine.setRazorsCount(mine.getRazorsCount() - 1);
+			}
 			break;
 		case LEFT:
 			nextRobotCoord = robotCoord.left();
@@ -106,6 +119,9 @@ public class Game {
 			lastScoreChange = score - prevScore;
 			state = GameState.Win;
 			return state;
+		} else if (nextRobotCellContent == HuttonsRazor) {
+			moveRobot(nextRobotCell);
+			mine.setRazorsCount(mine.getRazorsCount() + 1);
 		} else if (robotCoord.right().equals(nextRobotCoord) && nextRobotCellContent == Rock
 				&& getContent(mine.getCell(nextRobotCoord.right())) == Empty) {
 			moveRobot(nextRobotCell);
@@ -173,6 +189,24 @@ public class Game {
 					getCell(rightAndDownCoord, newCells).setContent(Rock);
 				} else if (getContent(curCell) == ClosedLambdaLift && mine.findCells(Lambda).size() == 0) {
 					getCell(curCoord, newCells).setContent(OpenLambdaLift);
+				} else if (getContent(curCell) == WadlersBeard && mine.getGrowth() > 0
+						&& route.size() % mine.getGrowth() == 0) {
+					if (getContent(leftCell) == Empty)
+						getCell(leftCoord, newCells).setContent(WadlersBeard);
+					if (getContent(upCell) == Empty)
+						getCell(upCoord, newCells).setContent(WadlersBeard);
+					if (getContent(rightCell) == Empty)
+						getCell(rightCoord, newCells).setContent(WadlersBeard);
+					if (getContent(downCell) == Empty)
+						getCell(downCoord, newCells).setContent(WadlersBeard);
+					if (getContent(leftAndUpCell) == Empty)
+						getCell(leftAndUpCoord, newCells).setContent(WadlersBeard);
+					if (getContent(rightAndUpCell) == Empty)
+						getCell(rightAndUpCoord, newCells).setContent(WadlersBeard);
+					if (getContent(leftAndDownCell) == Empty)
+						getCell(leftAndDownCoord, newCells).setContent(WadlersBeard);
+					if (getContent(rightAndDownCell) == Empty)
+						getCell(rightAndDownCoord, newCells).setContent(WadlersBeard);
 				}
 			}
 		}

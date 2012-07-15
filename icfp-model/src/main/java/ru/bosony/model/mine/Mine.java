@@ -31,11 +31,15 @@ public class Mine implements TextRepresentable {
 	protected int				waterLevel				= 0;
 	protected int				flooding				= 0;
 	protected int				robotWaterproof			= 10;
+	protected int				growth					= 25;
+	protected int				razorsCount				= 0;
 	protected static Pattern	minePattern				= Pattern
-																.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*|Trampoline.*)|$)");
+																.compile("(?s)(.*?)(\n\n(Water.*|Flooding.*|Waterproof.*|Trampoline.*|Growth.*|Razors.*)|$)");
 	protected static Pattern	waterPattern			= Pattern.compile("(?s).*(?<=.*Water )(\\d+).*");
 	protected static Pattern	floodingPattern			= Pattern.compile("(?s).*(?<=.*Flooding )(\\d+).*");
 	protected static Pattern	waterproofPattern		= Pattern.compile("(?s).*(?<=.*Waterproof )(\\d+).*");
+	protected static Pattern	growthPattern			= Pattern.compile("(?s).*(?<=.*Growth )(\\d+).*");
+	protected static Pattern	razorsPattern			= Pattern.compile("(?s).*(?<=.*Razors )(\\d+).*");
 	protected static Pattern	trampolinePattern		= Pattern
 																.compile("(?s).*?Trampoline ([A-I]) targets ([1-9]).*");
 	protected static String		firstTrampolineRegexp	= "(?s).*?Trampoline ([A-I]) targets ([1-9])";
@@ -61,15 +65,21 @@ public class Mine implements TextRepresentable {
 		}
 		text = text.replaceAll("\n*$", "");
 		text += "\n\n";
-		if (waterLevel != 0 || flooding != 0 || robotWaterproof != 10) {
+		if (waterLevel != 0) {
 			text += "Water " + waterLevel + "\n";
-			text += "Flooding " + flooding + "\n";
-			text += "Waterproof " + robotWaterproof + "\n";
 		}
+		if (flooding != 0) {
+			text += "Flooding " + flooding + "\n";
+		}
+		text += "Waterproof " + robotWaterproof + "\n";
 		for (CellContent trampoline : CellContent.values()) {
 			if (trampoline.getTrampolineTarget() != null)
 				text += "Trampoline " + trampoline.toText() + " targets " + trampoline.getTrampolineTarget().toText()
 						+ "\n";
+		}
+		text += "Growth " + growth + "\n";
+		if (razorsCount != 0) {
+			text += "Razors " + razorsCount + "\n";
 		}
 		text = text.replaceAll("\n*$", "");
 		return text;
@@ -145,6 +155,22 @@ public class Mine implements TextRepresentable {
 					break;
 				trampolines = trampolines.replaceFirst(firstTrampolineRegexp, "");
 			}
+
+			// Growth and razorsCount
+			String sGrowth = "";
+			String sRazors = "";
+			Matcher growthMatcher = growthPattern.matcher(metadata);
+			if (growthMatcher.matches()) {
+				sGrowth = growthMatcher.group(1);
+			}
+			Matcher razorsMatcher = razorsPattern.matcher(metadata);
+			if (razorsMatcher.matches()) {
+				sRazors = razorsMatcher.group(1);
+			}
+			if (sGrowth.length() > 0)
+				growth = Integer.parseInt(sGrowth);
+			if (sRazors.length() > 0)
+				razorsCount = Integer.parseInt(sRazors);
 		}
 	}
 
@@ -254,6 +280,18 @@ public class Mine implements TextRepresentable {
 
 	public int getRobotWaterproof() {
 		return robotWaterproof;
+	}
+
+	public int getGrowth() {
+		return growth;
+	}
+
+	public int getRazorsCount() {
+		return razorsCount;
+	}
+
+	public void setRazorsCount(int razorsCount) {
+		this.razorsCount = razorsCount;
 	}
 
 }

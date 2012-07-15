@@ -57,6 +57,8 @@ public class TextInterpreter {
 		writer.newLine();
 		writer.write("Underwater: " + game.getUnderwater() + " of " + mine.getRobotWaterproof());
 		writer.newLine();
+		writer.write("Razors:     " + mine.getRazorsCount());
+		writer.newLine();
 		writer.newLine();
 		writer.write(mine.toText());
 		writer.newLine();

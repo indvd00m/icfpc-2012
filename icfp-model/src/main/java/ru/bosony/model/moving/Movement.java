@@ -14,7 +14,8 @@ public enum Movement implements TextRepresentable {
 	UP("U"),
 	DOWN("D"),
 	WAIT("W"),
-	ABORT("A");
+	ABORT("A"),
+	RAZOR("S");
 
 	private String	text;
 
