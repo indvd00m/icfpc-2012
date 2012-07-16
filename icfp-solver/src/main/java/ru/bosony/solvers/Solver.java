@@ -1,8 +1,6 @@
 package ru.bosony.solvers;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 import ru.bosony.model.mine.Mine;
 
@@ -13,21 +11,27 @@ import ru.bosony.model.mine.Mine;
  */
 public class Solver {
 
-	protected Mine				mine;
-	protected BufferedWriter	writer;
+	protected Mine		mine;
+	protected String	route	= "A";
 
 	public Solver(Mine mine) {
 		this.mine = mine;
-		writer = new BufferedWriter(new OutputStreamWriter(System.out));
 	}
 
-	public void start() throws IOException {
+	public void start() throws IOException, InterruptedException {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				System.out.println(route);
+			}
+		});
 		// TODO solver
-		writer.write("A");
-		writer.flush();
+		while (true) {
+			Thread.sleep(1000);
+		}
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		String map = "";
 		for (String arg : args) {
 			map += arg + "\n";
