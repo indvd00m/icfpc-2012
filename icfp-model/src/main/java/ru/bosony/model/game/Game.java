@@ -12,7 +12,9 @@ import static ru.bosony.model.cellscontents.CellContent.Rock;
 import static ru.bosony.model.cellscontents.CellContent.WadlersBeard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ru.bosony.model.cellscontents.CellContent;
 import ru.bosony.model.mine.Cell;
@@ -32,6 +34,7 @@ public class Game {
 	protected int				lastScoreChange			= 0;
 	protected GameState			state					= GameState.Game;
 	protected int				lambdaCollectedCount	= 0;
+	protected List<Mine>		history					= new ArrayList<Mine>();
 	protected List<Movement>	route					= new ArrayList<Movement>();
 	protected int				underwater				= 0;
 
@@ -69,6 +72,11 @@ public class Game {
 
 		// Moving and scoring
 		route.add(mov);
+		try {
+			history.add(mine.clone());
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
 		Cell robotCell = mine.getRobotCell();
 		Coordinate robotCoord = robotCell.getCoordinate();
 		Coordinate nextRobotCoord = null;
@@ -348,5 +356,19 @@ public class Game {
 
 	public int getUnderwater() {
 		return underwater;
+	}
+
+	public boolean hasViciousCircle() {
+		if (route.size() != history.size())
+			throw new RuntimeException("Desynchronized history");
+		Map<Mine, Movement> state = new HashMap<Mine, Movement>();
+		for (int i = route.size() - 1; i >= 0; i--) {
+			Mine mine = history.get(i);
+			Movement mov = route.get(i);
+			if (state.get(mine) == mov)
+				return true;
+			state.put(mine, mov);
+		}
+		return false;
 	}
 }
