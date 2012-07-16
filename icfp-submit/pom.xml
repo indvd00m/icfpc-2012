@@ -19,7 +19,7 @@
 					<descriptors>
 						<descriptor>src/main/assembly/assembly.xml</descriptor>
 					</descriptors>
-					<finalName>icfp-xxxxxxxx</finalName>
+					<finalName>icfp-96518158</finalName>
 				</configuration>
 				<executions>
 					<execution>
