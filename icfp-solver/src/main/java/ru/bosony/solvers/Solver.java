@@ -25,8 +25,8 @@ public class Solver {
 				System.out.println(route);
 			}
 		});
-		AbstractSolver solver = new SimpleSolver(mine, new SolverListener() {
-			
+		AbstractSolver solver = new DijkstraSolver(mine, new SolverListener() {
+
 			@Override
 			public void foundNextRoute(String newRoute) {
 				route = newRoute;
