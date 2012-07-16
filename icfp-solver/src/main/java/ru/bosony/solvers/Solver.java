@@ -25,10 +25,13 @@ public class Solver {
 				System.out.println(route);
 			}
 		});
-		// TODO solver
-		while (true) {
-			Thread.sleep(1000);
-		}
+		AbstractSolver solver = new SimpleSolver(mine, new SolverListener() {
+			
+			@Override
+			public void foundNextRoute(String newRoute) {
+				route = newRoute;
+			}
+		});
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
