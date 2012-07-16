@@ -14,7 +14,7 @@ public class SimpleSolver extends AbstractSolver {
 	}
 
 	@Override
-	protected void solve() {
+	public void solve() {
 		String route = "";
 		while (true) {
 			try {

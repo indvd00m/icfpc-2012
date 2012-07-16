@@ -32,6 +32,7 @@ public class Solver {
 				route = newRoute;
 			}
 		});
+		solver.solve();
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {

@@ -20,7 +20,6 @@ public abstract class AbstractSolver {
 	public AbstractSolver(Mine mine, SolverListener listener) {
 		this.mine = mine;
 		this.listener = listener;
-		solve();
 	}
 
 	protected void addNewRoute(String route, int score) {
@@ -39,5 +38,5 @@ public abstract class AbstractSolver {
 		return maxScore;
 	}
 
-	protected abstract void solve();
+	public abstract void solve();
 }

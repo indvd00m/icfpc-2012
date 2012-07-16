@@ -23,7 +23,7 @@ import ru.bosony.model.moving.Movement;
  *         14.07.2012 2:02:18
  * 
  */
-public class Mine implements TextRepresentable {
+public class Mine implements TextRepresentable, Cloneable {
 
 	protected Cell[][]			cells;
 	protected int				sizeX;
@@ -307,6 +307,11 @@ public class Mine implements TextRepresentable {
 	@Override
 	public int hashCode() {
 		return toText().hashCode();
+	}
+
+	@Override
+	public Mine clone() throws CloneNotSupportedException {
+		return new Mine(toText());
 	}
 
 }
