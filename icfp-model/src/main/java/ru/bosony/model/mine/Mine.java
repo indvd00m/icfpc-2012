@@ -220,6 +220,13 @@ public class Mine implements TextRepresentable {
 		return cells;
 	}
 
+	public Set<Cell> getAdjacentCells(Cell cell) {
+		Set<Cell> cells = new HashSet<Cell>();
+		for (Coordinate coordinate : cell.getCoordinate().getAdjacentCoordinates())
+			cells.add(getCell(coordinate));
+		return cells;
+	}
+
 	public Set<Cell> findCells(CellContent content) {
 		Set<Cell> finded = new HashSet<Cell>();
 		for (int y = sizeY - 1; y >= 0; y--) {
