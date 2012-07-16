@@ -295,4 +295,13 @@ public class Mine implements TextRepresentable {
 		return lambdasAndHighOrderRocksStartCount;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Mine) {
+			Mine otherMine = (Mine) obj;
+			return toText().equals(otherMine.toText());
+		}
+		return super.equals(obj);
+	}
+
 }
