@@ -8,6 +8,7 @@ import static ru.bosony.model.cellscontents.CellContent.MiningRobot;
 import static ru.bosony.model.cellscontents.CellContent.OpenLambdaLift;
 import static ru.bosony.model.cellscontents.CellContent.Rock;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -76,6 +77,10 @@ public class Mine implements TextRepresentable, Cloneable {
 		text += metadata;
 		text = text.replaceAll("\n*$", "");
 		return text;
+	}
+
+	public String toTextWithoutRobot() {
+		return toText().replaceAll(CellContent.MiningRobot.toText(), CellContent.Empty.toText());
 	}
 
 	protected void fromText(String str) {
@@ -178,6 +183,18 @@ public class Mine implements TextRepresentable, Cloneable {
 		return cells[x - 1][sizeY - y];
 	}
 
+	public Set<Cell> getCells(Collection<Coordinate> coordinates) {
+		Set<Cell> cells = new HashSet<Cell>();
+		if (coordinates == null)
+			return cells;
+		for (Coordinate coordinate : coordinates) {
+			Cell cell = getCell(coordinate);
+			if (cell != null)
+				cells.add(cell);
+		}
+		return cells;
+	}
+
 	@Override
 	public String toString() {
 		return toText();
@@ -219,15 +236,21 @@ public class Mine implements TextRepresentable, Cloneable {
 
 	public Set<Cell> getNeighboringCells(Cell cell) {
 		Set<Cell> cells = new HashSet<Cell>();
-		for (Coordinate coordinate : cell.getCoordinate().getNeighboringCoordinates())
-			cells.add(getCell(coordinate));
+		for (Coordinate coordinate : cell.getCoordinate().getNeighboringCoordinates()) {
+			Cell nextCell = getCell(coordinate);
+			if (nextCell != null)
+				cells.add(nextCell);
+		}
 		return cells;
 	}
 
 	public Set<Cell> getAdjacentCells(Cell cell) {
 		Set<Cell> cells = new HashSet<Cell>();
-		for (Coordinate coordinate : cell.getCoordinate().getAdjacentCoordinates())
-			cells.add(getCell(coordinate));
+		for (Coordinate coordinate : cell.getCoordinate().getAdjacentCoordinates()) {
+			Cell nextCell = getCell(coordinate);
+			if (nextCell != null)
+				cells.add(nextCell);
+		}
 		return cells;
 	}
 

@@ -14,6 +14,7 @@ import ru.bosony.model.game.Game;
 import ru.bosony.model.game.GameState;
 import ru.bosony.model.mine.Cell;
 import ru.bosony.model.mine.Mine;
+import ru.bosony.model.moving.Coordinate;
 import ru.bosony.model.moving.Movement;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
@@ -26,8 +27,10 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class DijkstraSolver extends AbstractSolver {
 
-	protected Map<String, Set<Movement>>	loseMovs	= new HashMap<String, Set<Movement>>();
-	protected Set<CellsLink>				loseLinks	= new HashSet<CellsLink>();
+	protected Map<String, Set<Movement>>	loseMovs							= new HashMap<String, Set<Movement>>();
+	protected Map<String, Set<CellsLink>>	loseLinks							= new HashMap<String, Set<CellsLink>>();
+	protected Map<String, Set<Coordinate>>	attendedWalkingAroundCoordinates	= new HashMap<String, Set<Coordinate>>();
+	protected Map<String, Set<Coordinate>>	noWay								= new HashMap<String, Set<Coordinate>>();
 
 	public DijkstraSolver(Mine mine, SolverListener listener) {
 		super(mine, listener);
@@ -36,46 +39,80 @@ public class DijkstraSolver extends AbstractSolver {
 	@Override
 	public void solve() {
 		while (true) {
-			Mine testMine = null;
-			testMine = mine.clone();
-			Game game = new Game(testMine);
+			Mine mine = null;
+			mine = initialMine.clone();
+			Game game = new Game(mine);
 
 			while (game.getState() == GameState.Game) {
-				String map = testMine.toText();
+				Cell robotCell = mine.getRobotCell();
+				String map = mine.toText();
+				String mapWithoutRobot = mine.toTextWithoutRobot();
 				if (!loseMovs.containsKey(map)) {
 					loseMovs.put(map, new HashSet<Movement>());
 				}
-				Set<Cell> targets = testMine.findCells(CellContent.Lambda);
-				targets.addAll(testMine.findCells(CellContent.HighOrderRock));
-				if (targets.size() == 0)
-					targets = testMine.findCells(CellContent.OpenLambdaLift);
-				Graph<Cell, CellsLink> graph = getDirectedGraph(testMine);
+				if (!loseLinks.containsKey(map)) {
+					loseLinks.put(map, new HashSet<CellsLink>());
+				}
+				if (!noWay.containsKey(map)) {
+					noWay.put(map, new HashSet<Coordinate>());
+				}
+				if (!attendedWalkingAroundCoordinates.containsKey(mapWithoutRobot)) {
+					attendedWalkingAroundCoordinates.put(mapWithoutRobot, new HashSet<Coordinate>());
+				}
+				attendedWalkingAroundCoordinates.get(mapWithoutRobot).add(robotCell.getCoordinate());
+				Set<Cell> targets = new HashSet<Cell>();
+				boolean isFreeWay = false;
+				for (Cell cell : mine.getAdjacentCells(robotCell)) {
+					Movement mov = robotCell.getCoordinate().getNecessaryMovement(cell.getCoordinate());
+					isFreeWay |= !attendedWalkingAroundCoordinates.get(mapWithoutRobot).contains(cell.getCoordinate())
+							&& !loseMovs.get(map).contains(mov);
+				}
+				if (isFreeWay) {
+					targets.addAll(mine.findCells(CellContent.Lambda));
+					targets.addAll(mine.findCells(CellContent.HighOrderRock));
+					if (targets.size() == 0)
+						targets.addAll(mine.findCells(CellContent.OpenLambdaLift));
+					targets.removeAll(mine.getCells(noWay.get(map)));
+				} else {
+					targets.addAll(mine.findCells(CellContent.Empty));
+					targets.addAll(mine.findCells(CellContent.Earth));
+					targets.addAll(mine.findCells(CellContent.HuttonsRazor));
+					for (CellContent content : CellContent.getTrampolines()) {
+						targets.addAll(mine.findCells(content));
+					}
+					targets.removeAll(mine.getCells(attendedWalkingAroundCoordinates.get(mapWithoutRobot)));
+					targets.removeAll(mine.getCells(noWay.get(map)));
+					if (targets.size() == 0) {
+						game.move(Movement.ABORT);
+						continue;
+					}
+				}
+				Graph<Cell, CellsLink> graph = getDirectedGraph(mine);
 				DijkstraShortestPath<Cell, CellsLink> alg = new DijkstraShortestPath<Cell, CellsLink>(graph,
 						new CellsLinkTransformer<CellsLink, Double>());
 				Cell nextTarget = null;
 				List<CellsLink> routeToNextTarget = null;
 				double shortestDist = Double.MAX_VALUE;
 				for (Cell target : targets) {
-					if (target == null)
-						continue;
 					List<CellsLink> route = null;
 					Number dist = null;
 					try {
-						route = alg.getPath(testMine.getRobotCell(), target);
-						dist = alg.getDistance(testMine.getRobotCell(), target);
+						route = alg.getPath(mine.getRobotCell(), target);
+						dist = alg.getDistance(mine.getRobotCell(), target);
 					} catch (IllegalArgumentException e) {
-						// hmmm...
+						noWay.get(map).add(target.getCoordinate());
 						continue;
 					}
 					if (dist != null && route != null && route.size() > 0 && dist.doubleValue() < shortestDist) {
 						CellsLink firstLink = route.get(0);
 						Movement mov = firstLink.getSource().getCoordinate()
 								.getNecessaryMovement(firstLink.getTarget().getCoordinate());
-						if (!loseMovs.get(map).contains(mov)) {
+						if (!loseMovs.get(map).contains(mov)
+								&& !attendedWalkingAroundCoordinates.get(mapWithoutRobot).contains(
+										target.getCoordinate())) {
 							shortestDist = dist.doubleValue();
 							nextTarget = target;
 							routeToNextTarget = route;
-							break;
 						}
 					}
 				}
@@ -83,26 +120,52 @@ public class DijkstraSolver extends AbstractSolver {
 					for (CellsLink link : routeToNextTarget) {
 						Cell source = link.getSource();
 						Cell target = link.getTarget();
-						if (isSafeMovement(testMine, source, target)) {
+						if (isSafeMovement(mine, source, target)) {
 							Movement mov = source.getCoordinate().getNecessaryMovement(target.getCoordinate());
 							GameState state = game.move(mov);
 							if (state == GameState.Lose || state == GameState.Abort) {
 								loseMovs.get(map).add(mov);
-								loseLinks.add(link);
+								loseLinks.get(map).add(link);
 							}
 						}
 						break;
 					}
 				} else {
+					// Walking around
 					for (Movement mov : Movement.values()) {
 						if (!loseMovs.get(map).contains(mov)) {
-							GameState state = game.move(mov);
-							if (state == GameState.Game && map.equals(testMine.toText())) {
-								if (mov != Movement.WAIT)
-									loseMovs.get(map).add(mov);
-								game.move(Movement.ABORT);
+							if (mov == Movement.RAZOR && mine.getRazorsCount() > 0) {
+								boolean isRazorApplied = false;
+								for (Cell cell : mine.getNeighboringCells(robotCell)) {
+									isRazorApplied |= cell.getContent() == CellContent.WadlersBeard;
+								}
+								if (!isRazorApplied)
+									continue;
 							}
-							break;
+							Cell movCell = null;
+							for (Cell cell : mine.getAdjacentCells(robotCell)) {
+								if (robotCell.getCoordinate().getNecessaryMovement(cell.getCoordinate()) == mov) {
+									if (!attendedWalkingAroundCoordinates.get(mapWithoutRobot).contains(
+											cell.getCoordinate())) {
+										movCell = cell;
+										break;
+									}
+								}
+
+							}
+							if (mov == Movement.WAIT
+									|| mov == Movement.RAZOR
+									|| movCell != null
+									&& !attendedWalkingAroundCoordinates.get(mapWithoutRobot).contains(
+											movCell.getCoordinate())) {
+								GameState state = game.move(mov);
+								if (movCell != null && mapWithoutRobot.equals(mine.toTextWithoutRobot()))
+									attendedWalkingAroundCoordinates.get(mapWithoutRobot).add(movCell.getCoordinate());
+								if (state == GameState.Game && map.equals(mine.toText())) {
+									loseMovs.get(map).add(mov);
+								}
+								break;
+							}
 						}
 					}
 				}
@@ -154,6 +217,7 @@ public class DijkstraSolver extends AbstractSolver {
 			return;
 		else
 			processedCells.add(cell);
+		String map = mine.toText();
 		for (Cell neighboringCell : mine.getAdjacentCells(cell)) {
 			if (neighboringCell == null)
 				continue;
@@ -163,7 +227,7 @@ public class DijkstraSolver extends AbstractSolver {
 					|| neighboringContent == CellContent.OpenLambdaLift) {
 				if (isSafeMovement(mine, cell, neighboringCell)) {
 					CellsLink link = new CellsLink(mine, cell, neighboringCell);
-					if (!loseLinks.contains(link)) {
+					if (!loseLinks.get(map).contains(link)) {
 						links.add(link);
 						findAllCellLinks(mine, neighboringCell, links, processedCells);
 					}
@@ -179,7 +243,7 @@ public class DijkstraSolver extends AbstractSolver {
 					continue;
 				if (isSafeMovement(mine, cell, target)) {
 					CellsLink link = new CellsLink(mine, cell, target);
-					if (!loseLinks.contains(link)) {
+					if (!loseLinks.get(map).contains(link)) {
 						links.add(link);
 						findAllCellLinks(mine, target, links, processedCells);
 					}

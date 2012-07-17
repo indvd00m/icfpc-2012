@@ -1,7 +1,6 @@
 package ru.bosony.solvers;
 
 import java.text.DecimalFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,14 +14,14 @@ import ru.bosony.model.mine.Mine;
  */
 public abstract class AbstractSolver {
 
-	protected Mine				mine			= null;
+	protected Mine				initialMine		= null;
 	protected SolverListener	listener		= null;
 	protected Set<Game>			games			= new HashSet<Game>();
 	protected long				attemptsCount	= 0;
 	protected long				startTime		= System.currentTimeMillis();
 
 	public AbstractSolver(Mine mine, SolverListener listener) {
-		this.mine = mine;
+		this.initialMine = mine;
 		this.listener = listener;
 	}
 
@@ -34,8 +33,8 @@ public abstract class AbstractSolver {
 			listener.foundNextRoute(game.getStringRoute());
 			// TODO delete
 			System.out.println(new DecimalFormat("0.00").format((((System.currentTimeMillis() - startTime) / 1000d)))
-					+ " seconds, State = " + game.getState() + ", Score = " + game.getScore() + ", Route = "
-					+ game.getStringRoute());
+					+ " seconds, State = " + game.getState() + ", Score = " + game.getScore() + ", Route("
+					+ game.getRoute().size() + ") = " + game.getStringRoute());
 		}
 		games.add(game);
 	}
