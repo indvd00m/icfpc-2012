@@ -48,13 +48,17 @@ public class Mine implements TextRepresentable, Cloneable {
 	protected static String		firstTrampolineRegexp				= "(?s).*?Trampoline ([A-I]) targets ([1-9])";
 
 	public Mine(String text) {
-		fromText(text);
+		this(text, null);
 		if (findCells(OpenLambdaLift).size() != 0)
 			throw new RuntimeException("Detected OpenLambdaLift in new map!");
 		if (findCells(MiningRobot).size() != 1)
 			throw new RuntimeException("New map does not contain a robot!");
 		if (findCells(ClosedLambdaLift).size() != 1)
 			throw new RuntimeException("New map does not contain a ClosedLambdaLift!");
+	}
+
+	protected Mine(String text, Object obj) {
+		fromText(text);
 		lambdasAndHighOrderRocksStartCount = findCells(Lambda).size() + findCells(CellContent.HighOrderRock).size();
 	}
 
@@ -310,8 +314,8 @@ public class Mine implements TextRepresentable, Cloneable {
 	}
 
 	@Override
-	public Mine clone() throws CloneNotSupportedException {
-		return new Mine(toText());
+	public Mine clone() {
+		return new Mine(toText(), null);
 	}
 
 }

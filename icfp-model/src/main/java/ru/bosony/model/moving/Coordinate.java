@@ -96,4 +96,9 @@ public class Coordinate {
 		return super.equals(obj);
 	}
 
+	@Override
+	public String toString() {
+		return "Coordinate [x=" + x + ", y=" + y + "]";
+	}
+
 }

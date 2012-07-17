@@ -1,8 +1,11 @@
 package ru.bosony.solvers;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import ru.bosony.model.game.Game;
 import ru.bosony.model.mine.Mine;
 
 /**
@@ -12,30 +15,38 @@ import ru.bosony.model.mine.Mine;
  */
 public abstract class AbstractSolver {
 
-	protected Mine					mine			= null;
-	protected SolverListener		listener		= null;
-	protected Map<String, Integer>	routesWithScore	= new HashMap<String, Integer>();
-	protected long					attemptsCount	= 0;
+	protected Mine				mine			= null;
+	protected SolverListener	listener		= null;
+	protected Set<Game>			games			= new HashSet<Game>();
+	protected long				attemptsCount	= 0;
+	protected long				startTime		= System.currentTimeMillis();
 
 	public AbstractSolver(Mine mine, SolverListener listener) {
 		this.mine = mine;
 		this.listener = listener;
 	}
 
-	protected void addNewRoute(String route, int score) {
-		if (!routesWithScore.containsKey(route) && score > getMaxFoundScore()) {
-			routesWithScore.put(route, score);
-			listener.foundNextRoute(route);
+	protected void addNewRoute(Game game) {
+		Game maxScoreGame = getMaxFoundScoreGame();
+		if (maxScoreGame == null || game.getScore() > maxScoreGame.getScore()
+				|| game.getScore() == maxScoreGame.getScore()
+				&& game.getRoute().size() < maxScoreGame.getRoute().size()) {
+			listener.foundNextRoute(game.getStringRoute());
+			// TODO delete
+			System.out.println(new DecimalFormat("0.00").format((((System.currentTimeMillis() - startTime) / 1000d)))
+					+ " seconds, State = " + game.getState() + ", Score = " + game.getScore() + ", Route = "
+					+ game.getStringRoute());
 		}
+		games.add(game);
 	}
 
-	protected int getMaxFoundScore() {
-		int maxScore = 0;
-		for (int foundScore : routesWithScore.values()) {
-			if (foundScore > maxScore)
-				maxScore = foundScore;
+	protected Game getMaxFoundScoreGame() {
+		Game game = null;
+		for (Game foundGame : games) {
+			if (game == null || foundGame.getScore() > game.getScore())
+				game = foundGame;
 		}
-		return maxScore;
+		return game;
 	}
 
 	public abstract void solve();

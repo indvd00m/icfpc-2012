@@ -56,4 +56,9 @@ public class CellsLink {
 		return super.equals(obj);
 	}
 
+	@Override
+	public String toString() {
+		return "CellsLink [source=" + source + ", target=" + target + ", weight=" + weight + "]";
+	}
+
 }

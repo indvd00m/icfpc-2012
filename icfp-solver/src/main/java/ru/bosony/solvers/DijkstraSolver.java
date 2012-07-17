@@ -37,11 +37,7 @@ public class DijkstraSolver extends AbstractSolver {
 	public void solve() {
 		while (true) {
 			Mine testMine = null;
-			try {
-				testMine = mine.clone();
-			} catch (CloneNotSupportedException e1) {
-				throw new RuntimeException(e1);
-			}
+			testMine = mine.clone();
 			Game game = new Game(testMine);
 
 			while (game.getState() == GameState.Game) {
@@ -90,7 +86,7 @@ public class DijkstraSolver extends AbstractSolver {
 						if (isSafeMovement(testMine, source, target)) {
 							Movement mov = source.getCoordinate().getNecessaryMovement(target.getCoordinate());
 							GameState state = game.move(mov);
-							if (state == GameState.Lose || state == GameState.Abort || game.hasViciousCircle()) {
+							if (state == GameState.Lose || state == GameState.Abort) {
 								loseMovs.get(map).add(mov);
 								loseLinks.add(link);
 							}
@@ -101,17 +97,17 @@ public class DijkstraSolver extends AbstractSolver {
 					for (Movement mov : Movement.values()) {
 						if (!loseMovs.get(map).contains(mov)) {
 							GameState state = game.move(mov);
-							if (state == GameState.Lose || state == GameState.Abort || map.equals(testMine.toText())
-									|| game.hasViciousCircle())
-								loseMovs.get(map).add(mov);
+							if (state == GameState.Game && map.equals(testMine.toText())) {
+								if (mov != Movement.WAIT)
+									loseMovs.get(map).add(mov);
+								game.move(Movement.ABORT);
+							}
 							break;
 						}
 					}
 				}
 			}
-			if (game.getState() == GameState.Win) {
-				addNewRoute(game.getStringRoute(), game.getScore());
-			}
+			addNewRoute(game);
 			attemptsCount++;
 		}
 	}

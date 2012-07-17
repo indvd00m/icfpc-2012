@@ -9,12 +9,12 @@ import ru.bosony.model.io.TextRepresentable;
  */
 public enum Movement implements TextRepresentable {
 	
+	WAIT("W"),
+	RAZOR("S"),
 	LEFT("L"),
 	UP("U"),
 	RIGHT("R"),
 	DOWN("D"),
-	WAIT("W"),
-	RAZOR("S"),
 	ABORT("A");
 
 	private String	text;

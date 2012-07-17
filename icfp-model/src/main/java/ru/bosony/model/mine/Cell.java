@@ -36,4 +36,9 @@ public class Cell implements Cloneable {
 		return clone;
 	}
 
+	@Override
+	public String toString() {
+		return "Cell [coordinate=" + coordinate + ", content=" + content + "]";
+	}
+
 }

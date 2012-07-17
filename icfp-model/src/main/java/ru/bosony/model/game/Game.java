@@ -72,11 +72,7 @@ public class Game {
 
 		// Moving and scoring
 		route.add(mov);
-		try {
-			history.add(mine.clone());
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
-		}
+		history.add(mine.clone());
 		Cell robotCell = mine.getRobotCell();
 		Coordinate robotCoord = robotCell.getCoordinate();
 		Coordinate nextRobotCoord = null;
@@ -370,5 +366,11 @@ public class Game {
 			state.put(mine, mov);
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return state.toString() + ", score = " + score + ", " + route.size() + " steps: "
+				+ (route.size() > 100 ? getStringRoute().substring(0, 100) + "..." : getStringRoute()) + "\n\n" + mine;
 	}
 }
