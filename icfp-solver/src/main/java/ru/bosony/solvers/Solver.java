@@ -1,6 +1,8 @@
 package ru.bosony.solvers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import ru.bosony.model.mine.Mine;
 
@@ -39,6 +41,17 @@ public class Solver {
 		String map = "";
 		for (String arg : args) {
 			map += arg + "\n";
+		}
+		if (map == null || map.length() == 0) {
+			map = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			String line = "";
+			while (line != null) {
+				line = reader.readLine();
+				if (line != null)
+					map += line + "\n";
+			}
+			reader.close();
 		}
 		map = map.replaceAll("\n$", "");
 		Mine mine = new Mine(map);

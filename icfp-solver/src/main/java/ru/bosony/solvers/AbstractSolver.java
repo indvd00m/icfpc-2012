@@ -32,9 +32,9 @@ public abstract class AbstractSolver {
 				&& game.getRoute().size() < maxScoreGame.getRoute().size()) {
 			listener.foundNextRoute(game.getStringRoute());
 			// TODO delete
-			System.out.println(new DecimalFormat("0.00").format((((System.currentTimeMillis() - startTime) / 1000d)))
-					+ " seconds, State = " + game.getState() + ", Score = " + game.getScore() + ", Route("
-					+ game.getRoute().size() + ") = " + game.getStringRoute());
+//			System.out.println(new DecimalFormat("0.00").format((((System.currentTimeMillis() - startTime) / 1000d)))
+//					+ " seconds, State = " + game.getState() + ", Score = " + game.getScore() + ", Route("
+//					+ game.getRoute().size() + ") = " + game.getStringRoute());
 		}
 		games.add(game);
 	}
