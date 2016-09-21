@@ -1,0 +1,7 @@
+.metadata
+.classpath
+.settings
+.project
+.factorypath
+**/target/
+rebel.xml
